@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Error Codes",
+  "description": "Error code definitions for Android Agent Tools",
+  "error_codes": {
+    "PERMISSION_DENIED": {
+      "message": "Permission not granted"
+    },
+    "INVALID_PARAMETER": {
+      "message": "Invalid parameter provided"
+    },
+    "UNSUPPORTED_OPERATION": {
+      "message": "Operation not supported in current environment"
+    },
+    "FILE_NOT_FOUND": {
+      "message": "File does not exist"
+    },
+    "DIRECTORY_NOT_FOUND": {
+      "message": "Directory does not exist"
+    },
+    "NOT_A_FILE": {
+      "message": "Path is not a file"
+    },
+    "NOT_A_DIRECTORY": {
+      "message": "Path is not a directory"
+    },
+    "FILE_ALREADY_EXISTS": {
+      "message": "File already exists"
+    },
+    "STORAGE_FULL": {
+      "message": "Storage space insufficient"
+    },
+    "READ_ERROR": {
+      "message": "Failed to read file"
+    },
+    "WRITE_ERROR": {
+      "message": "Failed to write file"
+    },
+    "APP_NOT_FOUND": {
+      "message": "Application not found"
+    },
+    "APP_NOT_LAUNCHABLE": {
+      "message": "Application cannot be launched"
+    },
+    "LAUNCH_FAILED": {
+      "message": "Failed to launch application"
+    }
+  }
+}
