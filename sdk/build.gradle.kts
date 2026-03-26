@@ -34,6 +34,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.json:json:20231013")
 
     // Android instrumentation testing
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
