@@ -10,12 +10,24 @@ import com.androidagent.tools.tools.app.ListAppsTool
 import com.androidagent.tools.tools.appmgmt.ForceStopAppTool
 import com.androidagent.tools.tools.appmgmt.InstallAppTool
 import com.androidagent.tools.tools.appmgmt.UninstallAppTool
+import com.androidagent.tools.tools.clipboard.GetClipboardTool
+import com.androidagent.tools.tools.clipboard.SetClipboardTool
 import com.androidagent.tools.tools.file.DeleteFileTool
 import com.androidagent.tools.tools.file.FileExistsTool
 import com.androidagent.tools.tools.file.ListDirectoryTool
 import com.androidagent.tools.tools.file.ReadFileTool
 import com.androidagent.tools.tools.file.WriteFileTool
+import com.androidagent.tools.tools.input.DragTool
+import com.androidagent.tools.tools.input.LongPressTool
+import com.androidagent.tools.tools.input.PressKeyTool
+import com.androidagent.tools.tools.navigation.PressBackTool
+import com.androidagent.tools.tools.navigation.PressHomeTool
+import com.androidagent.tools.tools.navigation.PressRecentsTool
+import com.androidagent.tools.tools.node.ClickNodeByIdTool
+import com.androidagent.tools.tools.node.ClickNodeByTextTool
 import com.androidagent.tools.tools.permission.CheckPermissionsTool
+import com.androidagent.tools.tools.state.GetCurrentAppTool
+import com.androidagent.tools.tools.state.IsAppRunningTool
 import com.androidagent.tools.tools.system.GetBatteryStatusTool
 import com.androidagent.tools.tools.system.GetDeviceInfoTool
 import com.androidagent.tools.tools.ui.GetUiTreeTool
@@ -23,6 +35,8 @@ import com.androidagent.tools.tools.ui.InputTextTool
 import com.androidagent.tools.tools.ui.TakeScreenshotTool
 import com.androidagent.tools.tools.ui.TapTool
 import com.androidagent.tools.tools.ui.SwipeTool
+import com.androidagent.tools.tools.wait.WaitForElementTool
+import com.androidagent.tools.tools.wait.WaitForUiStableTool
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 
@@ -63,6 +77,33 @@ class AndroidAgentTools(private val context: Context) {
         executor.register(ForceStopAppTool())
         executor.register(UninstallAppTool())
         executor.register(InstallAppTool())
+
+        // Register Tier 3 tools
+        // Navigation tools
+        executor.register(PressBackTool())
+        executor.register(PressHomeTool())
+        executor.register(PressRecentsTool())
+
+        // Input tools
+        executor.register(PressKeyTool())
+        executor.register(LongPressTool())
+        executor.register(DragTool())
+
+        // Wait tools
+        executor.register(WaitForUiStableTool())
+        executor.register(WaitForElementTool())
+
+        // State tools
+        executor.register(GetCurrentAppTool())
+        executor.register(IsAppRunningTool())
+
+        // Clipboard tools
+        executor.register(GetClipboardTool())
+        executor.register(SetClipboardTool())
+
+        // Node interaction tools
+        executor.register(ClickNodeByTextTool())
+        executor.register(ClickNodeByIdTool())
     }
 
     fun listTools(): List<String> = executor.listTools()
@@ -89,7 +130,7 @@ class AndroidAgentTools(private val context: Context) {
     }
 
     companion object {
-        const val VERSION = "1.1.0"
+        const val VERSION = "2.0.0"
     }
 }
 

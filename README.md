@@ -53,13 +53,30 @@ android-agent-tools/
 - UI interaction: `get_ui_tree`, `tap`, `swipe`, `input_text`, `take_screenshot`
 - App management: `force_stop_app`, `uninstall_app`, `install_app`
 
+**Tier 3 - Navigation, Wait & Advanced:**
+- Navigation: `press_back`, `press_home`, `press_recents`
+- Input: `press_key`, `long_press`, `drag`
+- Wait: `wait_for_ui_stable`, `wait_for_element`
+- State: `get_current_app`, `is_app_running`
+- Clipboard: `get_clipboard`, `set_clipboard`
+- Node: `click_node_by_text`, `click_node_by_id`
+
 ### Tier 2 Requirements
 
 - **UI interaction tools** require ROOT access or Accessibility Service enabled
 - **App management tools** require ROOT access
 - **Screenshot** on non-ROOT devices requires Android 11+ (API 30)
 
-### Tier 2 Tool Parameters
+### Tier 3 Requirements
+
+- **Navigation tools** require ROOT access or Accessibility Service enabled
+- **Wait tools** require Accessibility Service enabled
+- **State tools** require Accessibility Service enabled
+- **Clipboard tools** require Accessibility Service enabled
+- **Node tools** require Accessibility Service enabled
+- **press_key** for non-navigation keys requires ROOT access
+
+### Tool Parameters
 
 | Tool | Parameters |
 |------|------------|
@@ -71,6 +88,17 @@ android-agent-tools/
 | `force_stop_app` | `package_name` (required) |
 | `uninstall_app` | `package_name` (required) |
 | `install_app` | `apk_path` (required) |
+| `press_key` | `key_name` or `key_code` (required) |
+| `long_press` | `x`, `y` (required), `duration` (optional) |
+| `drag` | `from_x`, `from_y`, `to_x`, `to_y`, `duration` (optional) |
+| `wait_for_ui_stable` | `timeout` (optional, default 5000ms) |
+| `wait_for_element` | `text` (required), `timeout` (optional) |
+| `get_current_app` | None |
+| `is_app_running` | `package_name` (required) |
+| `get_clipboard` | None |
+| `set_clipboard` | `text` (required) |
+| `click_node_by_text` | `text` (required), `exact` (optional) |
+| `click_node_by_id` | `resource_id` (required) |
 
 ## License
 
