@@ -2,6 +2,7 @@ package com.androidagent.tools.accessibility
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import android.graphics.Rect
@@ -9,14 +10,23 @@ import android.view.accessibility.AccessibilityNodeInfo
 
 class AccessibilityNodeInfoUtilsTest {
 
+    private fun setupBoundsMock(mockNode: AccessibilityNodeInfo, left: Int, top: Int, right: Int, bottom: Int) {
+        val rectSlot = slot<Rect>()
+        every { mockNode.getBoundsInScreen(capture(rectSlot)) } answers {
+            val rect = rectSlot.captured
+            // Use reflection to set fields since Rect.set() is not mocked
+            rect.javaClass.getDeclaredField("left").apply { isAccessible = true }.set(rect, left)
+            rect.javaClass.getDeclaredField("top").apply { isAccessible = true }.set(rect, top)
+            rect.javaClass.getDeclaredField("right").apply { isAccessible = true }.set(rect, right)
+            rect.javaClass.getDeclaredField("bottom").apply { isAccessible = true }.set(rect, bottom)
+        }
+    }
+
     @Test
     fun `nodeToMap converts basic node properties`() {
         val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
-        val bounds = Rect(0, 0, 100, 200)
+        setupBoundsMock(mockNode, 0, 0, 100, 200)
 
-        every { mockNode.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(bounds)
-        }
         every { mockNode.text } returns "Hello"
         every { mockNode.viewIdResourceName } returns "com.example:id/text"
         every { mockNode.isClickable } returns true
@@ -53,11 +63,8 @@ class AccessibilityNodeInfoUtilsTest {
     @Test
     fun `nodeToMap includes invisible nodes when includeInvisible is true`() {
         val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
-        val bounds = Rect(0, 0, 100, 200)
+        setupBoundsMock(mockNode, 0, 0, 100, 200)
 
-        every { mockNode.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(bounds)
-        }
         every { mockNode.isVisibleToUser } returns false
         every { mockNode.text } returns null
         every { mockNode.viewIdResourceName } returns null
@@ -87,12 +94,7 @@ class AccessibilityNodeInfoUtilsTest {
         val mockParent = mockk<AccessibilityNodeInfo>(relaxed = true)
         val mockChild = mockk<AccessibilityNodeInfo>(relaxed = true)
 
-        val parentBounds = Rect(0, 0, 200, 400)
-        val childBounds = Rect(10, 10, 100, 50)
-
-        every { mockParent.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(parentBounds)
-        }
+        setupBoundsMock(mockParent, 0, 0, 200, 400)
         every { mockParent.isVisibleToUser } returns true
         every { mockParent.text } returns "Parent"
         every { mockParent.viewIdResourceName } returns "com.example:id/parent"
@@ -103,9 +105,7 @@ class AccessibilityNodeInfoUtilsTest {
         every { mockParent.childCount } returns 1
         every { mockParent.getChild(0) } returns mockChild
 
-        every { mockChild.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(childBounds)
-        }
+        setupBoundsMock(mockChild, 10, 10, 100, 50)
         every { mockChild.isVisibleToUser } returns true
         every { mockChild.text } returns "Child"
         every { mockChild.viewIdResourceName } returns "com.example:id/child"
@@ -128,11 +128,8 @@ class AccessibilityNodeInfoUtilsTest {
     @Test
     fun `nodeToMap handles null text and resourceId`() {
         val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
-        val bounds = Rect(0, 0, 100, 200)
+        setupBoundsMock(mockNode, 0, 0, 100, 200)
 
-        every { mockNode.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(bounds)
-        }
         every { mockNode.text } returns null
         every { mockNode.viewIdResourceName } returns null
         every { mockNode.isClickable } returns false
@@ -309,23 +306,18 @@ class AccessibilityNodeInfoUtilsTest {
     @Test
     fun `getBoundsString returns formatted bounds`() {
         val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
-
-        every { mockNode.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(10, 20, 100, 200)
-        }
+        setupBoundsMock(mockNode, 10, 20, 100, 200)
 
         val result = AccessibilityNodeInfoUtils.getBoundsString(mockNode)
         assertEquals("[10,20][100,200]", result)
     }
+
     // Tests for findNodeById (alias method)
     @Test
     fun `findNodeById finds node by resource id`() {
         val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
-        val bounds = Rect(0, 0, 100, 100)
+        setupBoundsMock(mockNode, 0, 0, 100, 100)
 
-        every { mockNode.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(bounds)
-        }
         every { mockNode.viewIdResourceName } returns "com.example:id/button"
         every { mockNode.isVisibleToUser } returns true
         every { mockNode.childCount } returns 0
@@ -337,11 +329,8 @@ class AccessibilityNodeInfoUtilsTest {
     @Test
     fun `findNodeById returns null when not found`() {
         val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
-        val bounds = Rect(0, 0, 100, 100)
+        setupBoundsMock(mockNode, 0, 0, 100, 100)
 
-        every { mockNode.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(bounds)
-        }
         every { mockNode.viewIdResourceName } returns "com.example:id/other"
         every { mockNode.isVisibleToUser } returns true
         every { mockNode.childCount } returns 0
@@ -354,11 +343,8 @@ class AccessibilityNodeInfoUtilsTest {
     @Test
     fun `findNodeByText finds node containing text`() {
         val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
-        val bounds = Rect(0, 0, 100, 100)
+        setupBoundsMock(mockNode, 0, 0, 100, 100)
 
-        every { mockNode.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(bounds)
-        }
         every { mockNode.text } returns "Hello World"
         every { mockNode.isVisibleToUser } returns true
         every { mockNode.childCount } returns 0
@@ -370,11 +356,8 @@ class AccessibilityNodeInfoUtilsTest {
     @Test
     fun `findNodeByText is case insensitive`() {
         val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
-        val bounds = Rect(0, 0, 100, 100)
+        setupBoundsMock(mockNode, 0, 0, 100, 100)
 
-        every { mockNode.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(bounds)
-        }
         every { mockNode.text } returns "Hello World"
         every { mockNode.isVisibleToUser } returns true
         every { mockNode.childCount } returns 0
@@ -386,11 +369,8 @@ class AccessibilityNodeInfoUtilsTest {
     @Test
     fun `findNodeByText returns null when not found`() {
         val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
-        val bounds = Rect(0, 0, 100, 100)
+        setupBoundsMock(mockNode, 0, 0, 100, 100)
 
-        every { mockNode.getBoundsInScreen(any()) } answers {
-            (it.invocation.args[0] as Rect).set(bounds)
-        }
         every { mockNode.text } returns "Hello World"
         every { mockNode.isVisibleToUser } returns true
         every { mockNode.childCount } returns 0
