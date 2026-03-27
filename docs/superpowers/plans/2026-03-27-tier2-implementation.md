@@ -1,6 +1,6 @@
 # Tier 2 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 实现 Android Agent Tools SDK 的 Tier 2 功能，包括 UI 交互和应用管理工具。
 
@@ -58,7 +58,7 @@ sdk/src/test/java/com/androidagent/tools/
 - Modify: `sdk/src/main/java/com/androidagent/tools/core/ToolError.kt`
 - Modify: `sdk/src/test/java/com/androidagent/tools/core/ToolErrorTest.kt`
 
-- [ ] **Step 1: 扩展 ToolError 枚举，添加 Tier 2 错误码**
+- [x] **Step 1: 扩展 ToolError 枚举，添加 Tier 2 错误码**
 
 ```kotlin
 package com.androidagent.tools.core
@@ -103,7 +103,7 @@ enum class ToolError(val message: String) {
 }
 ```
 
-- [ ] **Step 2: 添加测试用例**
+- [x] **Step 2: 添加测试用例**
 
 在 ToolErrorTest.kt 中添加:
 
@@ -128,12 +128,12 @@ fun `tier 2 operation errors have correct messages`() {
 }
 ```
 
-- [ ] **Step 3: 运行测试验证**
+- [x] **Step 3: 运行测试验证**
 
 Run: `./gradlew :sdk:test --tests "com.androidagent.tools.core.ToolErrorTest"`
 Expected: All tests pass
 
-- [ ] **Step 4: 提交**
+- [x] **Step 4: 提交**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/core/ToolError.kt sdk/src/test/java/com/androidagent/tools/core/ToolErrorTest.kt
@@ -148,7 +148,7 @@ git commit -m "feat(core): add Tier 2 error codes to ToolError"
 - Modify: `sdk/src/main/java/com/androidagent/tools/core/ParameterValidator.kt`
 - Modify: `sdk/src/test/java/com/androidagent/tools/core/ParameterValidatorTest.kt`
 
-- [ ] **Step 1: 添加 requireInt 和 optionalInt 方法**
+- [x] **Step 1: 添加 requireInt 和 optionalInt 方法**
 
 在 ParameterValidator 类中添加:
 
@@ -174,7 +174,7 @@ fun optionalInt(key: String, default: Int): Int {
 }
 ```
 
-- [ ] **Step 2: 添加测试用例**
+- [x] **Step 2: 添加测试用例**
 
 ```kotlin
 @Test
@@ -200,12 +200,12 @@ fun `optionalInt returns default for missing parameter`() {
 }
 ```
 
-- [ ] **Step 3: 运行测试验证**
+- [x] **Step 3: 运行测试验证**
 
 Run: `./gradlew :sdk:test --tests "com.androidagent.tools.core.ParameterValidatorTest"`
 Expected: All tests pass
 
-- [ ] **Step 4: 提交**
+- [x] **Step 4: 提交**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/core/ParameterValidator.kt sdk/src/test/java/com/androidagent/tools/core/ParameterValidatorTest.kt
@@ -219,7 +219,7 @@ git commit -m "feat(core): add requireInt and optionalInt to ParameterValidator"
 **Files:**
 - Create: `sdk/src/main/java/com/androidagent/tools/core/Capability.kt`
 
-- [ ] **Step 1: 创建 Capability 枚举**
+- [x] **Step 1: 创建 Capability 枚举**
 
 ```kotlin
 package com.androidagent.tools.core
@@ -232,7 +232,7 @@ enum class Capability {
 }
 ```
 
-- [ ] **Step 2: 提交**
+- [x] **Step 2: 提交**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/core/Capability.kt
@@ -247,7 +247,7 @@ git commit -m "feat(core): add Capability enum for environment detection"
 - Create: `sdk/src/main/java/com/androidagent/tools/core/EnvironmentDetector.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/core/EnvironmentDetectorTest.kt`
 
-- [ ] **Step 1: 创建 EnvironmentDetector 类**
+- [x] **Step 1: 创建 EnvironmentDetector 类**
 
 ```kotlin
 package com.androidagent.tools.core
@@ -317,7 +317,7 @@ class EnvironmentDetector(private val context: Context) {
 }
 ```
 
-- [ ] **Step 2: 创建测试类**
+- [x] **Step 2: 创建测试类**
 
 ```kotlin
 package com.androidagent.tools.core
@@ -354,12 +354,12 @@ class EnvironmentDetectorTest {
 }
 ```
 
-- [ ] **Step 3: 运行测试验证**
+- [x] **Step 3: 运行测试验证**
 
 Run: `./gradlew :sdk:test --tests "com.androidagent.tools.core.EnvironmentDetectorTest"`
 Expected: All tests pass
 
-- [ ] **Step 4: 提交**
+- [x] **Step 4: 提交**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/core/EnvironmentDetector.kt sdk/src/test/java/com/androidagent/tools/core/EnvironmentDetectorTest.kt
@@ -374,7 +374,7 @@ git commit -m "feat(core): implement EnvironmentDetector for capability detectio
 - Create: `sdk/src/main/java/com/androidagent/tools/accessibility/AccessibilityNodeInfoUtils.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/accessibility/AccessibilityNodeInfoUtilsTest.kt`
 
-- [ ] **Step 1: 创建节点解析工具类**
+- [x] **Step 1: 创建节点解析工具类**
 
 ```kotlin
 package com.androidagent.tools.accessibility
@@ -426,7 +426,7 @@ object AccessibilityNodeInfoUtils {
 }
 ```
 
-- [ ] **Step 2: 创建测试类**
+- [x] **Step 2: 创建测试类**
 
 ```kotlin
 package com.androidagent.tools.accessibility
@@ -476,12 +476,12 @@ class AccessibilityNodeInfoUtilsTest {
 }
 ```
 
-- [ ] **Step 3: 运行测试验证**
+- [x] **Step 3: 运行测试验证**
 
 Run: `./gradlew :sdk:test --tests "com.androidagent.tools.accessibility.AccessibilityNodeInfoUtilsTest"`
 Expected: All tests pass
 
-- [ ] **Step 4: 提交**
+- [x] **Step 4: 提交**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/accessibility/AccessibilityNodeInfoUtils.kt sdk/src/test/java/com/androidagent/tools/accessibility/AccessibilityNodeInfoUtilsTest.kt
@@ -495,9 +495,9 @@ git commit -m "feat(accessibility): implement AccessibilityNodeInfoUtils for nod
 **Files:**
 - Create: `sdk/src/main/java/com/androidagent/tools/accessibility/AgentAccessibilityService.kt`
 
-- [ ] **Step 1: 创建无障碍服务类** (详见设计文档 2.3 节)
+- [x] **Step 1: 创建无障碍服务类** (详见设计文档 2.3 节)
 
-- [ ] **Step 2: 提交**
+- [x] **Step 2: 提交**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/accessibility/AgentAccessibilityService.kt
@@ -512,9 +512,9 @@ git commit -m "feat(accessibility): implement AgentAccessibilityService"
 - Create: `sdk/src/main/res/xml/accessibility_service_config.xml`
 - Create: `sdk/src/main/res/values/strings.xml`
 
-- [ ] **Step 1: 创建配置文件和字符串资源**
+- [x] **Step 1: 创建配置文件和字符串资源**
 
-- [ ] **Step 2: 提交**
+- [x] **Step 2: 提交**
 
 ```bash
 git add sdk/src/main/res/xml/accessibility_service_config.xml sdk/src/main/res/values/strings.xml
@@ -528,9 +528,9 @@ git commit -m "feat(resources): add accessibility service configuration"
 **Files:**
 - Modify: `sdk/src/main/AndroidManifest.xml`
 
-- [ ] **Step 1: 添加权限和服务声明** (详见设计文档第 5 节)
+- [x] **Step 1: 添加权限和服务声明** (详见设计文档第 5 节)
 
-- [ ] **Step 2: 提交**
+- [x] **Step 2: 提交**
 
 ```bash
 git add sdk/src/main/AndroidManifest.xml
@@ -568,14 +568,14 @@ git commit -m "feat(manifest): add Tier 2 permissions and accessibility service"
 **Files:**
 - Modify: `sdk/src/main/java/com/androidagent/tools/AndroidAgentTools.kt`
 
-- [ ] **Step 1: 添加 Tier 2 工具注册，版本号升级到 1.1.0**
+- [x] **Step 1: 添加 Tier 2 工具注册，版本号升级到 1.1.0**
 
-- [ ] **Step 2: 运行所有测试验证**
+- [x] **Step 2: 运行所有测试验证**
 
 Run: `./gradlew :sdk:test`
 Expected: All tests pass
 
-- [ ] **Step 3: 提交**
+- [x] **Step 3: 提交**
 
 ---
 
@@ -584,8 +584,8 @@ Expected: All tests pass
 **Files:**
 - Modify: `README.md`
 
-- [ ] **Step 1: 更新 README.md 添加 Tier 2 工具说明**
+- [x] **Step 1: 更新 README.md 添加 Tier 2 工具说明**
 
-- [ ] **Step 2: 运行完整测试套件**
+- [x] **Step 2: 运行完整测试套件**
 
-- [ ] **Step 3: 提交**
+- [x] **Step 3: 提交**

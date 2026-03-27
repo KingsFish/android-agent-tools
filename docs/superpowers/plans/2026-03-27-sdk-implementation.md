@@ -1,6 +1,6 @@
 # Android Agent Tools SDK Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Build an Android SDK that provides 11 standardized tools for LLM agents to interact with Android devices.
 
@@ -76,7 +76,7 @@ sdk/
 - Create: `settings.gradle.kts` (root)
 - Create: `build.gradle.kts` (root)
 
-- [ ] **Step 1: Create root settings.gradle.kts**
+- [x] **Step 1: Create root settings.gradle.kts**
 
 ```kotlin
 pluginManagement {
@@ -99,7 +99,7 @@ rootProject.name = "android-agent-tools"
 include(":sdk")
 ```
 
-- [ ] **Step 2: Create root build.gradle.kts**
+- [x] **Step 2: Create root build.gradle.kts**
 
 ```kotlin
 plugins {
@@ -108,7 +108,7 @@ plugins {
 }
 ```
 
-- [ ] **Step 3: Create sdk/build.gradle.kts**
+- [x] **Step 3: Create sdk/build.gradle.kts**
 
 ```kotlin
 plugins {
@@ -158,7 +158,7 @@ tasks.withType<Test> {
 }
 ```
 
-- [ ] **Step 4: Create AndroidManifest.xml**
+- [x] **Step 4: Create AndroidManifest.xml**
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -169,14 +169,14 @@ tasks.withType<Test> {
 </manifest>
 ```
 
-- [ ] **Step 5: Create directory structure**
+- [x] **Step 5: Create directory structure**
 
 ```bash
 mkdir -p sdk/src/main/java/com/androidagent/tools/{core,tools/{file,app,system,permission},executor}
 mkdir -p sdk/src/test/java/com/androidagent/tools/{core,tools/{file,app,system,permission},executor}
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add .
@@ -193,7 +193,7 @@ git commit -m "chore: setup Android SDK project structure"
 - Create: `sdk/src/test/java/com/androidagent/tools/core/ToolErrorTest.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/core/ToolResultTest.kt`
 
-- [ ] **Step 1: Write ToolError test**
+- [x] **Step 1: Write ToolError test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/core/ToolErrorTest.kt
@@ -221,14 +221,14 @@ class ToolErrorTest {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.core.ToolErrorTest"
 ```
 Expected: FAIL with "Unresolved reference: ToolError"
 
-- [ ] **Step 3: Implement ToolError**
+- [x] **Step 3: Implement ToolError**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/core/ToolError.kt
@@ -259,14 +259,14 @@ enum class ToolError(val message: String) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.core.ToolErrorTest"
 ```
 Expected: PASS
 
-- [ ] **Step 5: Write ToolResult test**
+- [x] **Step 5: Write ToolResult test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/core/ToolResultTest.kt
@@ -315,14 +315,14 @@ class ToolResultTest {
 }
 ```
 
-- [ ] **Step 6: Run test to verify it fails**
+- [x] **Step 6: Run test to verify it fails**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.core.ToolResultTest"
 ```
 Expected: FAIL with "Unresolved reference: ToolResult"
 
-- [ ] **Step 7: Implement ToolResult**
+- [x] **Step 7: Implement ToolResult**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/core/ToolResult.kt
@@ -361,14 +361,14 @@ sealed class ToolResult {
 }
 ```
 
-- [ ] **Step 8: Run test to verify it passes**
+- [x] **Step 8: Run test to verify it passes**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.core.ToolResultTest"
 ```
 Expected: PASS
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/core/*.kt
@@ -385,7 +385,7 @@ git commit -m "feat(core): add ToolError and ToolResult with tests"
 - Create: `sdk/src/main/java/com/androidagent/tools/core/ParameterValidator.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/core/ParameterValidatorTest.kt`
 
-- [ ] **Step 1: Write ParameterValidator test**
+- [x] **Step 1: Write ParameterValidator test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/core/ParameterValidatorTest.kt
@@ -443,14 +443,14 @@ class ParameterValidatorTest {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.core.ParameterValidatorTest"
 ```
 Expected: FAIL with "Unresolved reference: ParameterValidator"
 
-- [ ] **Step 3: Implement ParameterValidator**
+- [x] **Step 3: Implement ParameterValidator**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/core/ParameterValidator.kt
@@ -507,14 +507,14 @@ class ParameterValidator(private val params: Map<String, Any?>) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.core.ParameterValidatorTest"
 ```
 Expected: PASS
 
-- [ ] **Step 5: Implement Tool interface**
+- [x] **Step 5: Implement Tool interface**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/core/Tool.kt
@@ -581,7 +581,7 @@ fun org.json.JSONArray.toList(): List<Any?> {
 }
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/core/*.kt
@@ -597,7 +597,7 @@ git commit -m "feat(core): add Tool interface and ParameterValidator"
 - Create: `sdk/src/main/java/com/androidagent/tools/tools/file/ReadFileTool.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/tools/file/ReadFileToolTest.kt`
 
-- [ ] **Step 1: Write ReadFileTool test**
+- [x] **Step 1: Write ReadFileTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/file/ReadFileToolTest.kt
@@ -657,14 +657,14 @@ class ReadFileToolTest {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.tools.file.ReadFileToolTest"
 ```
 Expected: FAIL with "Unresolved reference: ReadFileTool"
 
-- [ ] **Step 3: Implement ReadFileTool**
+- [x] **Step 3: Implement ReadFileTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/file/ReadFileTool.kt
@@ -722,14 +722,14 @@ class ReadFileTool : Tool {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.tools.file.ReadFileToolTest"
 ```
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/tools/file/ReadFileTool.kt
@@ -745,7 +745,7 @@ git commit -m "feat(file): add ReadFileTool with tests"
 - Create: `sdk/src/main/java/com/androidagent/tools/tools/file/WriteFileTool.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/tools/file/WriteFileToolTest.kt`
 
-- [ ] **Step 1: Write WriteFileTool test**
+- [x] **Step 1: Write WriteFileTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/file/WriteFileToolTest.kt
@@ -820,14 +820,14 @@ class WriteFileToolTest {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.tools.file.WriteFileToolTest"
 ```
 Expected: FAIL
 
-- [ ] **Step 3: Implement WriteFileTool**
+- [x] **Step 3: Implement WriteFileTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/file/WriteFileTool.kt
@@ -883,14 +883,14 @@ class WriteFileTool : Tool {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.tools.file.WriteFileToolTest"
 ```
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/tools/file/WriteFileTool.kt
@@ -910,7 +910,7 @@ git commit -m "feat(file): add WriteFileTool with tests"
 - Create: `sdk/src/test/java/com/androidagent/tools/tools/file/DeleteFileToolTest.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/tools/file/FileExistsToolTest.kt`
 
-- [ ] **Step 1: Write ListDirectoryTool test**
+- [x] **Step 1: Write ListDirectoryTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/file/ListDirectoryToolTest.kt
@@ -963,7 +963,7 @@ class ListDirectoryToolTest {
 }
 ```
 
-- [ ] **Step 2: Implement ListDirectoryTool**
+- [x] **Step 2: Implement ListDirectoryTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/file/ListDirectoryTool.kt
@@ -1010,7 +1010,7 @@ class ListDirectoryTool : Tool {
 }
 ```
 
-- [ ] **Step 3: Write DeleteFileTool test**
+- [x] **Step 3: Write DeleteFileTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/file/DeleteFileToolTest.kt
@@ -1052,7 +1052,7 @@ class DeleteFileToolTest {
 }
 ```
 
-- [ ] **Step 4: Implement DeleteFileTool**
+- [x] **Step 4: Implement DeleteFileTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/file/DeleteFileTool.kt
@@ -1091,7 +1091,7 @@ class DeleteFileTool : Tool {
 }
 ```
 
-- [ ] **Step 5: Write FileExistsTool test**
+- [x] **Step 5: Write FileExistsTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/file/FileExistsToolTest.kt
@@ -1154,7 +1154,7 @@ class FileExistsToolTest {
 }
 ```
 
-- [ ] **Step 6: Implement FileExistsTool**
+- [x] **Step 6: Implement FileExistsTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/file/FileExistsTool.kt
@@ -1192,14 +1192,14 @@ class FileExistsTool : Tool {
 }
 ```
 
-- [ ] **Step 7: Run all file tool tests**
+- [x] **Step 7: Run all file tool tests**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.tools.file.*"
 ```
 Expected: PASS
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/tools/file/*.kt
@@ -1219,7 +1219,7 @@ git commit -m "feat(file): add ListDirectoryTool, DeleteFileTool, FileExistsTool
 - Create: `sdk/src/test/java/com/androidagent/tools/tools/app/GetAppInfoToolTest.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/tools/app/LaunchAppToolTest.kt`
 
-- [ ] **Step 1: Write ListAppsTool test**
+- [x] **Step 1: Write ListAppsTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/app/ListAppsToolTest.kt
@@ -1268,7 +1268,7 @@ class ListAppsToolTest {
 }
 ```
 
-- [ ] **Step 2: Implement ListAppsTool**
+- [x] **Step 2: Implement ListAppsTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/app/ListAppsTool.kt
@@ -1318,7 +1318,7 @@ class ListAppsTool : Tool {
 }
 ```
 
-- [ ] **Step 3: Write GetAppInfoTool test**
+- [x] **Step 3: Write GetAppInfoTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/app/GetAppInfoToolTest.kt
@@ -1362,7 +1362,7 @@ class GetAppInfoToolTest {
 }
 ```
 
-- [ ] **Step 4: Implement GetAppInfoTool**
+- [x] **Step 4: Implement GetAppInfoTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/app/GetAppInfoTool.kt
@@ -1413,7 +1413,7 @@ class GetAppInfoTool : Tool {
 }
 ```
 
-- [ ] **Step 5: Write LaunchAppTool test**
+- [x] **Step 5: Write LaunchAppTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/app/LaunchAppToolTest.kt
@@ -1475,7 +1475,7 @@ class LaunchAppToolTest {
 }
 ```
 
-- [ ] **Step 6: Implement LaunchAppTool**
+- [x] **Step 6: Implement LaunchAppTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/app/LaunchAppTool.kt
@@ -1516,14 +1516,14 @@ class LaunchAppTool : Tool {
 }
 ```
 
-- [ ] **Step 7: Run all app tool tests**
+- [x] **Step 7: Run all app tool tests**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.tools.app.*"
 ```
 Expected: PASS
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/tools/app/*.kt
@@ -1541,7 +1541,7 @@ git commit -m "feat(app): add ListAppsTool, GetAppInfoTool, LaunchAppTool with t
 - Create: `sdk/src/test/java/com/androidagent/tools/tools/system/GetDeviceInfoToolTest.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/tools/system/GetBatteryStatusToolTest.kt`
 
-- [ ] **Step 1: Write GetDeviceInfoTool test**
+- [x] **Step 1: Write GetDeviceInfoTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/system/GetDeviceInfoToolTest.kt
@@ -1600,7 +1600,7 @@ class GetDeviceInfoToolTest {
 }
 ```
 
-- [ ] **Step 2: Implement GetDeviceInfoTool**
+- [x] **Step 2: Implement GetDeviceInfoTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/system/GetDeviceInfoTool.kt
@@ -1643,7 +1643,7 @@ class GetDeviceInfoTool : Tool {
 }
 ```
 
-- [ ] **Step 3: Write GetBatteryStatusTool test**
+- [x] **Step 3: Write GetBatteryStatusTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/system/GetBatteryStatusToolTest.kt
@@ -1692,7 +1692,7 @@ class GetBatteryStatusToolTest {
 }
 ```
 
-- [ ] **Step 4: Implement GetBatteryStatusTool**
+- [x] **Step 4: Implement GetBatteryStatusTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/system/GetBatteryStatusTool.kt
@@ -1752,14 +1752,14 @@ class GetBatteryStatusTool : Tool {
 }
 ```
 
-- [ ] **Step 5: Run all system tool tests**
+- [x] **Step 5: Run all system tool tests**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.tools.system.*"
 ```
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/tools/system/*.kt
@@ -1775,7 +1775,7 @@ git commit -m "feat(system): add GetDeviceInfoTool, GetBatteryStatusTool with te
 - Create: `sdk/src/main/java/com/androidagent/tools/tools/permission/CheckPermissionsTool.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/tools/permission/CheckPermissionsToolTest.kt`
 
-- [ ] **Step 1: Write CheckPermissionsTool test**
+- [x] **Step 1: Write CheckPermissionsTool test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/tools/permission/CheckPermissionsToolTest.kt
@@ -1824,7 +1824,7 @@ class CheckPermissionsToolTest {
 }
 ```
 
-- [ ] **Step 2: Implement CheckPermissionsTool**
+- [x] **Step 2: Implement CheckPermissionsTool**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/tools/permission/CheckPermissionsTool.kt
@@ -1896,14 +1896,14 @@ class CheckPermissionsTool : Tool {
 }
 ```
 
-- [ ] **Step 3: Run test to verify it passes**
+- [x] **Step 3: Run test to verify it passes**
 
 ```bash
 cd sdk && ./gradlew test --tests "com.androidagent.tools.tools.permission.CheckPermissionsToolTest"
 ```
 Expected: PASS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/tools/permission/CheckPermissionsTool.kt
@@ -1920,7 +1920,7 @@ git commit -m "feat(permission): add CheckPermissionsTool with tests"
 - Create: `sdk/src/main/java/com/androidagent/tools/AndroidAgentTools.kt`
 - Create: `sdk/src/test/java/com/androidagent/tools/executor/ToolExecutorTest.kt`
 
-- [ ] **Step 1: Write ToolExecutor test**
+- [x] **Step 1: Write ToolExecutor test**
 
 ```kotlin
 // sdk/src/test/java/com/androidagent/tools/executor/ToolExecutorTest.kt
@@ -1965,7 +1965,7 @@ class ToolExecutorTest {
 }
 ```
 
-- [ ] **Step 2: Implement ToolExecutor**
+- [x] **Step 2: Implement ToolExecutor**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/executor/ToolExecutor.kt
@@ -1995,7 +1995,7 @@ class ToolExecutor {
 }
 ```
 
-- [ ] **Step 3: Write AndroidAgentTools entry point**
+- [x] **Step 3: Write AndroidAgentTools entry point**
 
 ```kotlin
 // sdk/src/main/java/com/androidagent/tools/AndroidAgentTools.kt
@@ -2092,14 +2092,14 @@ private fun org.json.JSONArray.toList(): List<Any?> {
 }
 ```
 
-- [ ] **Step 4: Run all tests**
+- [x] **Step 4: Run all tests**
 
 ```bash
 cd sdk && ./gradlew test
 ```
 Expected: All PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add sdk/src/main/java/com/androidagent/tools/executor/*.kt
@@ -2116,7 +2116,7 @@ git commit -m "feat: add ToolExecutor and AndroidAgentTools entry point"
 - Modify: `README.md`
 - Create: `sdk/README.md`
 
-- [ ] **Step 1: Update root README.md**
+- [x] **Step 1: Update root README.md**
 
 ```markdown
 # Android Agent Tools
@@ -2175,7 +2175,7 @@ android-agent-tools/
 MIT
 ```
 
-- [ ] **Step 2: Create SDK README**
+- [x] **Step 2: Create SDK README**
 
 ```markdown
 # Android Agent Tools SDK
@@ -2286,7 +2286,7 @@ when (result) {
 The SDK is designed to be testable. Each tool can be unit tested independently.
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add README.md sdk/README.md
