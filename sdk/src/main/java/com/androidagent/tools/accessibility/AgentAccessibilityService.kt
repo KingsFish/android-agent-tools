@@ -2,6 +2,7 @@ package com.androidagent.tools.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
+import android.app.ActivityManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.graphics.Bitmap
@@ -10,6 +11,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.view.accessibility.AccessibilityNodeInfo
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -203,5 +205,316 @@ class AgentAccessibilityService : AccessibilityService() {
                 }
             }, null)
         }
+    }
+
+    // === Global Actions (Navigation) ===
+
+    /**
+     * Press the back button
+     */
+    fun pressBack(): Boolean = performGlobalAction(GLOBAL_ACTION_BACK)
+
+    /**
+     * Press the home button
+     */
+    fun pressHome(): Boolean = performGlobalAction(GLOBAL_ACTION_HOME)
+
+    /**
+     * Press the recents button
+     */
+    fun pressRecents(): Boolean = performGlobalAction(GLOBAL_ACTION_RECENTS)
+
+    /**
+     * Open notifications panel
+     */
+    fun openNotifications(): Boolean = performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
+
+    /**
+     * Open quick settings panel
+     */
+    fun openQuickSettings(): Boolean = performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
+
+    /**
+     * Open power dialog
+     */
+    fun openPowerDialog(): Boolean = performGlobalAction(GLOBAL_ACTION_POWER_DIALOG)
+
+    /**
+     * Lock the screen (Android P+)
+     */
+    fun lockScreen(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
+        } else {
+            false
+        }
+    }
+
+    /**
+     * Take screenshot using global action (Android P+)
+     */
+    fun takeScreenshotAction(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            performGlobalAction(GLOBAL_ACTION_TAKE_SCREENSHOT)
+        } else {
+            false
+        }
+    }
+
+    // === Advanced Gestures ===
+
+    /**
+     * Perform long press at specified coordinates
+     */
+    suspend fun performLongPress(x: Int, y: Int, duration: Long = 1000): Boolean {
+        val path = Path().apply {
+            moveTo(x.toFloat(), y.toFloat())
+        }
+
+        val gesture = GestureDescription.Builder()
+            .addStroke(GestureDescription.StrokeDescription(path, 0, duration))
+            .build()
+
+        return dispatchGesture(gesture)
+    }
+
+    /**
+     * Perform drag gesture
+     */
+    suspend fun performDrag(
+        fromX: Int, fromY: Int,
+        toX: Int, toY: Int,
+        duration: Long = 500
+    ): Boolean {
+        val path = Path().apply {
+            moveTo(fromX.toFloat(), fromY.toFloat())
+            lineTo(toX.toFloat(), toY.toFloat())
+        }
+
+        val gesture = GestureDescription.Builder()
+            .addStroke(GestureDescription.StrokeDescription(path, 0, duration))
+            .build()
+
+        return dispatchGesture(gesture)
+    }
+
+    // === Wait Operations ===
+
+    /**
+     * Wait for UI to become stable by comparing UI trees
+     */
+    suspend fun waitForUiStable(timeoutMs: Long = 5000, checkIntervalMs: Long = 500): Boolean {
+        val startTime = System.currentTimeMillis()
+        var prevTreeHash: Int? = null
+
+        while (System.currentTimeMillis() - startTime < timeoutMs) {
+            val rootNode = rootInActiveWindow
+            if (rootNode != null) {
+                val currentHash = computeUiTreeHash(rootNode)
+                rootNode.recycle()
+
+                if (prevTreeHash != null && prevTreeHash == currentHash) {
+                    return true
+                }
+                prevTreeHash = currentHash
+            }
+            delay(checkIntervalMs)
+        }
+        return false
+    }
+
+    /**
+     * Wait for an element with specific text to appear
+     */
+    suspend fun waitForElement(text: String, timeoutMs: Long = 5000, checkIntervalMs: Long = 500): Boolean {
+        val startTime = System.currentTimeMillis()
+
+        while (System.currentTimeMillis() - startTime < timeoutMs) {
+            val rootNode = rootInActiveWindow
+            if (rootNode != null) {
+                val found = AccessibilityNodeInfoUtils.findNodeByText(rootNode, text)
+                rootNode.recycle()
+                if (found != null) {
+                    found.recycle()
+                    return true
+                }
+            }
+            delay(checkIntervalMs)
+        }
+        return false
+    }
+
+    /**
+     * Wait for an element with specific resource ID to appear
+     */
+    suspend fun waitForElementById(resourceId: String, timeoutMs: Long = 5000, checkIntervalMs: Long = 500): Boolean {
+        val startTime = System.currentTimeMillis()
+
+        while (System.currentTimeMillis() - startTime < timeoutMs) {
+            val rootNode = rootInActiveWindow
+            if (rootNode != null) {
+                val found = AccessibilityNodeInfoUtils.findNodeByResourceId(rootNode, resourceId)
+                rootNode.recycle()
+                if (found != null) {
+                    found.recycle()
+                    return true
+                }
+            }
+            delay(checkIntervalMs)
+        }
+        return false
+    }
+
+    private fun computeUiTreeHash(node: AccessibilityNodeInfo): Int {
+        val bounds = Rect()
+        node.getBoundsInScreen(bounds)
+        var hash = bounds.hashCode()
+        hash = 31 * hash + (node.className?.hashCode() ?: 0)
+        hash = 31 * hash + (node.text?.hashCode() ?: 0)
+        hash = 31 * hash + (node.viewIdResourceName?.hashCode() ?: 0)
+        hash = 31 * hash + node.childCount
+
+        for (i in 0 until node.childCount) {
+            val child = node.getChild(i) ?: continue
+            hash = 31 * hash + computeUiTreeHash(child)
+            child.recycle()
+        }
+        return hash
+    }
+
+    // === State Query ===
+
+    /**
+     * Get the current foreground app package name
+     */
+    fun getCurrentApp(): String? {
+        val rootNode = rootInActiveWindow ?: return null
+        val packageName = rootNode.packageName?.toString()
+        rootNode.recycle()
+        return packageName
+    }
+
+    /**
+     * Check if an app is running
+     */
+    fun isAppRunning(packageName: String): Boolean {
+        val am = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        return am.runningAppProcesses?.any { it.processName == packageName } ?: false
+    }
+
+    // === Clipboard Operations ===
+
+    /**
+     * Get clipboard content
+     */
+    fun getClipboard(): String? {
+        return try {
+            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            clipboard.primaryClip?.getItemAt(0)?.text?.toString()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
+     * Set clipboard content
+     */
+    fun setClipboard(text: String): Boolean {
+        return try {
+            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("text", text)
+            clipboard.setPrimaryClip(clip)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    // === Node Interaction ===
+
+    /**
+     * Click a node by its text content
+     */
+    fun clickNodeByText(text: String, exact: Boolean = false): Boolean {
+        val rootNode = rootInActiveWindow ?: return false
+        val node = if (exact) {
+            AccessibilityNodeInfoUtils.findNodeByTextExact(rootNode, text)
+        } else {
+            AccessibilityNodeInfoUtils.findNodeByText(rootNode, text)
+        }
+
+        if (node == null) {
+            rootNode.recycle()
+            return false
+        }
+
+        val result = performNodeClick(node)
+        node.recycle()
+        rootNode.recycle()
+        return result
+    }
+
+    /**
+     * Click a node by its resource ID
+     */
+    fun clickNodeById(resourceId: String): Boolean {
+        val rootNode = rootInActiveWindow ?: return false
+        val node = AccessibilityNodeInfoUtils.findNodeByResourceId(rootNode, resourceId)
+
+        if (node == null) {
+            rootNode.recycle()
+            return false
+        }
+
+        val result = performNodeClick(node)
+        node.recycle()
+        rootNode.recycle()
+        return result
+    }
+
+    /**
+     * Perform click on a node, with fallback to gesture click
+     */
+    private fun performNodeClick(node: AccessibilityNodeInfo): Boolean {
+        // Try ACTION_CLICK first
+        if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+            return true
+        }
+
+        // Fallback: get bounds and perform gesture click
+        val bounds = Rect()
+        node.getBoundsInScreen(bounds)
+        val centerX = (bounds.left + bounds.right) / 2
+        val centerY = (bounds.top + bounds.bottom) / 2
+
+        // We need to return synchronously here, so we'll use the gesture approach
+        // The caller should handle this in a coroutine context
+        return try {
+            val path = Path().apply {
+                moveTo(centerX.toFloat(), centerY.toFloat())
+            }
+            val gesture = GestureDescription.Builder()
+                .addStroke(GestureDescription.StrokeDescription(path, 0, 100))
+                .build()
+            dispatchGestureSync(gesture)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun dispatchGestureSync(gesture: GestureDescription): Boolean {
+        var result = false
+        val latch = java.util.concurrent.CountDownLatch(1)
+        dispatchGesture(gesture, object : GestureResultCallback() {
+            override fun onCompleted(gestureDescription: GestureDescription?) {
+                result = true
+                latch.countDown()
+            }
+            override fun onCancelled(gestureDescription: GestureDescription?) {
+                latch.countDown()
+            }
+        }, null)
+        latch.await(5, java.util.concurrent.TimeUnit.SECONDS)
+        return result
     }
 }

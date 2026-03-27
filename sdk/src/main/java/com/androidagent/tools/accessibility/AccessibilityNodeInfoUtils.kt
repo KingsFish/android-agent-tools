@@ -151,6 +151,29 @@ object AccessibilityNodeInfoUtils {
     }
 
     /**
+     * Finds a node with exact text match.
+     *
+     * @param node The root AccessibilityNodeInfo to search from
+     * @param text The exact text to match
+     * @return The found AccessibilityNodeInfo, or null if not found
+     *         NOTE: The caller is responsible for recycling the returned node
+     */
+    fun findNodeByTextExact(node: AccessibilityNodeInfo, text: String): AccessibilityNodeInfo? {
+        if (node.text?.toString() == text) {
+            return node
+        }
+        for (i in 0 until node.childCount) {
+            val child = node.getChild(i) ?: continue
+            val found = findNodeByTextExact(child, text)
+            if (found != null) {
+                return found
+            }
+            child.recycle()
+        }
+        return null
+    }
+
+    /**
      * Finds nodes containing specific text.
      *
      * @param node The root AccessibilityNodeInfo to search from

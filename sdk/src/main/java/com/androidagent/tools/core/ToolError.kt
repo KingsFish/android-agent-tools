@@ -34,7 +34,21 @@ enum class ToolError(val message: String) {
     UNINSTALL_FAILED("Failed to uninstall application"),
     FORCE_STOP_FAILED("Failed to force stop application"),
     APK_NOT_FOUND("APK file does not exist"),
-    INVALID_APK("Invalid or corrupted APK file");
+    INVALID_APK("Invalid or corrupted APK file"),
+
+    // Tier 3 - Navigation errors
+    GLOBAL_ACTION_FAILED("Failed to perform global action"),
+    KEY_EVENT_FAILED("Failed to send key event"),
+
+    // Tier 3 - Wait errors
+    WAIT_TIMEOUT("Wait operation timed out"),
+    ELEMENT_NOT_FOUND("Element not found"),
+
+    // Tier 3 - Clipboard errors
+    CLIPBOARD_FAILED("Failed to access clipboard"),
+
+    // Tier 3 - State errors
+    APP_NOT_RUNNING("Application is not running");
 
     fun withContext(context: String): String = "$message: $context"
 }
