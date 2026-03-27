@@ -49,4 +49,55 @@ class ParameterValidatorTest {
         assertTrue(result.isSuccess)
         assertEquals(listOf("storage", "camera"), result.getOrNull())
     }
+
+    @Test
+    fun `requireInt returns success for integer value`() {
+        val validator = ParameterValidator(mapOf("count" to 42))
+        val result = validator.requireInt("count")
+        assertTrue(result.isSuccess)
+        assertEquals(42, (result as Result.Success).value)
+    }
+
+    @Test
+    fun `requireInt fails for missing parameter`() {
+        val validator = ParameterValidator(emptyMap())
+        val result = validator.requireInt("count")
+        assertTrue(result.isFailure)
+    }
+
+    @Test
+    fun `optionalInt returns default for missing parameter`() {
+        val validator = ParameterValidator(emptyMap())
+        val result = validator.optionalInt("count", 10)
+        assertEquals(10, result)
+    }
+
+    @Test
+    fun `requireInt returns success for Long value`() {
+        val validator = ParameterValidator(mapOf("count" to 42L))
+        val result = validator.requireInt("count")
+        assertTrue(result.isSuccess)
+        assertEquals(42, (result as Result.Success).value)
+    }
+
+    @Test
+    fun `requireInt fails for non-numeric type`() {
+        val validator = ParameterValidator(mapOf("count" to "not a number"))
+        val result = validator.requireInt("count")
+        assertTrue(result.isFailure)
+    }
+
+    @Test
+    fun `optionalInt returns value when present`() {
+        val validator = ParameterValidator(mapOf("count" to 42))
+        val result = validator.optionalInt("count", 10)
+        assertEquals(42, result)
+    }
+
+    @Test
+    fun `optionalInt converts Long to Int`() {
+        val validator = ParameterValidator(mapOf("count" to 99L))
+        val result = validator.optionalInt("count", 10)
+        assertEquals(99, result)
+    }
 }

@@ -22,6 +22,20 @@ class ParameterValidator(private val params: Map<String, Any?>) {
         }
     }
 
+    /**
+     * Requires a non-empty string parameter.
+     * Validates that the parameter exists, is a string, and is not blank.
+     */
+    fun requireNonEmptyString(key: String): Result<String> {
+        val value = params[key]
+        return when {
+            value == null -> Result.Failure(ToolError.INVALID_PARAMETER, "Missing required parameter: $key")
+            value !is String -> Result.Failure(ToolError.INVALID_PARAMETER, "Parameter '$key' must be a string")
+            value.isBlank() -> Result.Failure(ToolError.INVALID_PARAMETER, "Parameter '$key' must not be empty")
+            else -> Result.Success(value)
+        }
+    }
+
     fun optionalString(key: String, default: String): String {
         val value = params[key]
         return when {
@@ -46,6 +60,26 @@ class ParameterValidator(private val params: Map<String, Any?>) {
             value == null -> Result.Failure(ToolError.INVALID_PARAMETER, "Missing required parameter: $key")
             value !is List<*> -> Result.Failure(ToolError.INVALID_PARAMETER, "Parameter '$key' must be an array")
             else -> Result.Success(value.mapNotNull { it?.toString() })
+        }
+    }
+
+    fun requireInt(key: String): Result<Int> {
+        val value = params[key]
+        return when {
+            value == null -> Result.Failure(ToolError.INVALID_PARAMETER, "Missing required parameter: $key")
+            value is Int -> Result.Success(value)
+            value is Number -> Result.Success(value.toInt())
+            else -> Result.Failure(ToolError.INVALID_PARAMETER, "Parameter '$key' must be an integer")
+        }
+    }
+
+    fun optionalInt(key: String, default: Int): Int {
+        val value = params[key]
+        return when {
+            value == null -> default
+            value is Int -> value
+            value is Number -> value.toInt()
+            else -> default
         }
     }
 }

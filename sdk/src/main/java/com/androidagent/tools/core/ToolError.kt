@@ -19,7 +19,22 @@ enum class ToolError(val message: String) {
     // App operation errors
     APP_NOT_FOUND("Application not found"),
     APP_NOT_LAUNCHABLE("Application cannot be launched"),
-    LAUNCH_FAILED("Failed to launch application");
+    LAUNCH_FAILED("Failed to launch application"),
+
+    // Tier 2 - Environment errors
+    ROOT_REQUIRED("Root access required"),
+    ACCESSIBILITY_SERVICE_REQUIRED("Accessibility service not enabled"),
+    MEDIA_PROJECTION_REQUIRED("Media projection permission not granted"),
+
+    // Tier 2 - Operation errors
+    SCREENSHOT_FAILED("Failed to capture screenshot"),
+    GESTURE_FAILED("Failed to perform gesture"),
+    UI_TREE_FAILED("Failed to get UI tree"),
+    INSTALL_FAILED("Failed to install application"),
+    UNINSTALL_FAILED("Failed to uninstall application"),
+    FORCE_STOP_FAILED("Failed to force stop application"),
+    APK_NOT_FOUND("APK file does not exist"),
+    INVALID_APK("Invalid or corrupted APK file");
 
     fun withContext(context: String): String = "$message: $context"
 }

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">Android Agent Tools Accessibility Service enables automated UI interactions including tapping, swiping, text input, and screenshot capture.</string>
+</resources>
