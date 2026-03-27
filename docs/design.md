@@ -562,6 +562,8 @@ Check the status of specified permissions.
 
 ### 6.2 权限与工具映射
 
+**Tier 1 工具**
+
 | 工具 | 所需权限 |
 |------|----------|
 | `read_file` (私有目录) | 无 |
@@ -576,6 +578,39 @@ Check the status of specified permissions.
 | `launch_app` | 无 |
 | `get_device_info` | 无 |
 | `get_battery_status` | 无 |
+| `check_permissions` | 无 |
+
+**Tier 2 工具**
+
+| 工具 | 所需权限/能力 |
+|------|--------------|
+| `get_ui_tree` | Accessibility Service |
+| `tap` | ROOT 或 Accessibility Service |
+| `swipe` | ROOT 或 Accessibility Service |
+| `input_text` | Accessibility Service |
+| `take_screenshot` | ROOT 或 Media Projection (Android 11+) |
+| `install_app` | ROOT |
+| `uninstall_app` | ROOT |
+| `force_stop_app` | ROOT |
+
+**Tier 3 工具**
+
+| 工具 | 所需权限/能力 |
+|------|--------------|
+| `press_back` | ROOT 或 Accessibility Service |
+| `press_home` | ROOT 或 Accessibility Service |
+| `press_recents` | ROOT 或 Accessibility Service |
+| `press_key` (非导航键) | ROOT |
+| `long_press` | ROOT 或 Accessibility Service |
+| `drag` | ROOT 或 Accessibility Service |
+| `wait_for_ui_stable` | Accessibility Service |
+| `wait_for_element` | Accessibility Service |
+| `get_current_app` | Accessibility Service |
+| `is_app_running` | Accessibility Service |
+| `get_clipboard` | Accessibility Service |
+| `set_clipboard` | Accessibility Service |
+| `click_node_by_text` | Accessibility Service |
+| `click_node_by_id` | Accessibility Service |
 
 ---
 
@@ -587,14 +622,44 @@ Check the status of specified permissions.
 | **MCP Server App** | ✅ 已完成 | 独立 App，通过 HTTP 暴露所有工具 |
 | **ADB 工具命令集** | 📋 规划中 | 供远程 Agent 通过 ADB 调用 |
 
+### 7.1 MCP Server App
+
+MCP Server App 是一个独立的 Android 应用，通过 HTTP 协议暴露所有工具，供远程 Agent 调用。
+
+**架构**
+
+```
+mcp-server/
+├── MainActivity.kt         # UI 入口（启动/停止服务）
+├── McpService.kt           # 后台服务（运行 HTTP Server）
+├── McpHttpServer.kt        # NanoHTTPD 实现
+├── McpProtocol.kt          # MCP 协议处理
+└── ToolSchemaGenerator.kt  # 工具 Schema 定义
+```
+
+**端点**
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/health` | GET | 健康检查 |
+| `/mcp/tools/list` | POST | 获取工具列表 |
+| `/mcp/tools/call` | POST | 执行工具 |
+
+**使用方式**
+
+1. WiFi（同网络）：直接访问手机 IP + 端口 8080
+2. USB（ADB 转发）：`adb forward tcp:8080 tcp:8080`
+
 ---
 
 ## 8. 开放问题
 
 1. 是否需要支持二进制文件的读写？
 2. `list_directory` 是否需要支持分页？
-3. 是否需要提供文件监听能力（如 `watch_file`）？
+3. ~~是否需要提供文件监听能力（如 `watch_file`）？~~ → 已在 Tier 4 规划
 4. 国际化支持：错误消息是否需要多语言？
+5. MCP Server 是否需要支持 WebSocket 实时通信？
+6. 是否需要提供 ADB 命令行工具集？
 
 ---
 

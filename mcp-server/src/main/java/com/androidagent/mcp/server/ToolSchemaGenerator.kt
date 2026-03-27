@@ -277,9 +277,10 @@ object ToolSchemaGenerator {
                 "inputSchema" to mapOf(
                     "type" to "object",
                     "properties" to mapOf(
-                        "key" to mapOf("type" to "string", "description" to "Key name to press")
+                        "key_name" to mapOf("type" to "string", "description" to "Key name to press (e.g., 'enter', 'delete', 'volume_up')"),
+                        "key_code" to mapOf("type" to "integer", "description" to "Key code to press (Android KeyEvent code)")
                     ),
-                    "required" to listOf("key")
+                    "required" to listOf<String>()
                 )
             ),
             "long_press" to mapOf(
@@ -318,8 +319,7 @@ object ToolSchemaGenerator {
                 "inputSchema" to mapOf(
                     "type" to "object",
                     "properties" to mapOf(
-                        "timeout_ms" to mapOf("type" to "integer", "description" to "Timeout in milliseconds (default: 5000)", "default" to 5000),
-                        "check_interval_ms" to mapOf("type" to "integer", "description" to "Check interval in milliseconds (default: 500)", "default" to 500)
+                        "timeout" to mapOf("type" to "integer", "description" to "Timeout in milliseconds (default: 5000)", "default" to 5000)
                     ),
                     "required" to listOf<String>()
                 )
@@ -331,7 +331,7 @@ object ToolSchemaGenerator {
                     "type" to "object",
                     "properties" to mapOf(
                         "text" to mapOf("type" to "string", "description" to "Text to search for"),
-                        "timeout_ms" to mapOf("type" to "integer", "description" to "Timeout in milliseconds (default: 5000)", "default" to 5000)
+                        "timeout" to mapOf("type" to "integer", "description" to "Timeout in milliseconds (default: 5000)", "default" to 5000)
                     ),
                     "required" to listOf("text")
                 )
