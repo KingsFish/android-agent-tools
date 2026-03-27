@@ -12,16 +12,28 @@ class SwipeTool : Tool {
         val validator = ParameterValidator(params)
 
         val startXResult = validator.requireInt("start_x")
-        if (startXResult.isFailure) return startXResult as Result.Failure
+        if (startXResult.isFailure) {
+            val f = startXResult as Result.Failure
+            return Result.Failure(f.error, f.context)
+        }
 
         val startYResult = validator.requireInt("start_y")
-        if (startYResult.isFailure) return startYResult as Result.Failure
+        if (startYResult.isFailure) {
+            val f = startYResult as Result.Failure
+            return Result.Failure(f.error, f.context)
+        }
 
         val endXResult = validator.requireInt("end_x")
-        if (endXResult.isFailure) return endXResult as Result.Failure
+        if (endXResult.isFailure) {
+            val f = endXResult as Result.Failure
+            return Result.Failure(f.error, f.context)
+        }
 
         val endYResult = validator.requireInt("end_y")
-        if (endYResult.isFailure) return endYResult as Result.Failure
+        if (endYResult.isFailure) {
+            val f = endYResult as Result.Failure
+            return Result.Failure(f.error, f.context)
+        }
 
         return Result.Success(Unit)
     }

@@ -12,7 +12,7 @@ class InputTextTool : Tool {
         val validator = ParameterValidator(params)
         return when (val result = validator.requireString("text")) {
             is Result.Success -> Result.Success(Unit)
-            is Result.Failure -> result
+            is Result.Failure -> Result.Failure(result.error, result.context)
         }
     }
 

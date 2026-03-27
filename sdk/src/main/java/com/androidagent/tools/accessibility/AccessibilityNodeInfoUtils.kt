@@ -95,6 +95,38 @@ object AccessibilityNodeInfoUtils {
     }
 
     /**
+     * Finds a node by its resource ID (alias for findNodeByResourceId).
+     *
+     * @param node The root AccessibilityNodeInfo to search from
+     * @param id The resource ID to find
+     * @return The found AccessibilityNodeInfo, or null if not found
+     */
+    fun findNodeById(node: AccessibilityNodeInfo, id: String): AccessibilityNodeInfo? {
+        return findNodeByResourceId(node, id)
+    }
+
+    /**
+     * Finds a node containing specific text.
+     *
+     * @param node The root AccessibilityNodeInfo to search from
+     * @param text The text to search for
+     * @return The found AccessibilityNodeInfo, or null if not found
+     */
+    fun findNodeByText(node: AccessibilityNodeInfo, text: String): AccessibilityNodeInfo? {
+        if (node.text?.toString()?.contains(text, ignoreCase = true) == true) {
+            return node
+        }
+        for (i in 0 until node.childCount) {
+            val child = node.getChild(i) ?: continue
+            val found = findNodeByText(child, text)
+            if (found != null) {
+                return found
+            }
+        }
+        return null
+    }
+
+    /**
      * Finds nodes containing specific text.
      *
      * @param node The root AccessibilityNodeInfo to search from

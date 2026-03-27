@@ -11,13 +11,14 @@ class TapTool : Tool {
     override fun validate(params: Map<String, Any?>): Result<Unit> {
         val validator = ParameterValidator(params)
         val xResult = validator.requireInt("x")
-        val yResult = validator.requireInt("y")
-
-        return when {
-            xResult.isFailure -> xResult as Result.Failure
-            yResult.isFailure -> yResult as Result.Failure
-            else -> Result.Success(Unit)
+        if (xResult.isFailure) {
+            return Result.Failure((xResult as Result.Failure).error, xResult.context)
         }
+        val yResult = validator.requireInt("y")
+        if (yResult.isFailure) {
+            return Result.Failure((yResult as Result.Failure).error, yResult.context)
+        }
+        return Result.Success(Unit)
     }
 
     override suspend fun execute(context: Context, params: Map<String, Any?>): ToolResult {
