@@ -20,7 +20,7 @@
 | Tier 1 | ✅ 已完成 | 11 |
 | Tier 2 | ✅ 已完成 | 8 |
 | Tier 3 | ✅ 已完成 | 14 |
-| Tier 4 | 📋 规划中 | 8+ |
+| Tier 4 | 📋 规划中 | 9+ |
 
 **当前版本**: 2.0.0 | **总工具数**: 33
 
@@ -133,11 +133,55 @@
 
 | 领域 | 工具 | 优先级 |
 |------|------|--------|
+| 文件监听 | `watch_file` | P3 |
 | 通知管理 | `list_notifications`, `post_notification` | P4 |
 | 媒体操作 | `take_photo`, `record_audio`, `play_media` | P4 |
 | 传感器 | `get_sensor_data` | P4 |
 | 短信/联系人 | `send_sms`, `list_contacts` | P4 |
 | 定位 | `get_location` | P4 |
+
+#### watch_file
+
+Watch a directory for file changes. Used for waiting async operations like download completion, file export, etc.
+
+**Parameters**
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| path | string | true | - | Absolute path to the directory to watch |
+| events | array[string] | false | ["create"] | Events to watch: `create`, `modify`, `delete` |
+| timeout | integer | false | 30000 | Timeout in milliseconds |
+
+**Events**
+- `create`: File created in the directory
+- `modify`: File content modified
+- `delete`: File deleted
+
+**Example**
+```json
+// Request - Wait for a file to appear in Downloads
+{"path": "/sdcard/Download", "events": ["create"], "timeout": 60000}
+
+// Response - File created
+{
+  "success": true,
+  "data": {
+    "event": "create",
+    "file_name": "result.json",
+    "triggered_at": 1711324800000
+  }
+}
+
+// Response - Timeout
+{
+  "success": false,
+  "error": {
+    "code": "WATCH_TIMEOUT",
+    "message": "No event triggered within 60000ms"
+  }
+}
+```
+
+**Requirements**: Requires storage permission for the target directory. Uses Android FileObserver (inotify).
 
 ---
 
