@@ -49,6 +49,29 @@ android-agent-tools/
 - System info: `get_device_info`, `get_battery_status`
 - Permissions: `check_permissions`
 
+**Tier 2 - UI Interaction & App Management:**
+- UI interaction: `get_ui_tree`, `tap`, `swipe`, `input_text`, `take_screenshot`
+- App management: `force_stop_app`, `uninstall_app`, `install_app`
+
+### Tier 2 Requirements
+
+- **UI interaction tools** require ROOT access or Accessibility Service enabled
+- **App management tools** require ROOT access
+- **Screenshot** on non-ROOT devices requires Android 11+ (API 30)
+
+### Tier 2 Tool Parameters
+
+| Tool | Parameters |
+|------|------------|
+| `get_ui_tree` | `max_depth` (optional), `include_invisible` (optional) |
+| `tap` | `x`, `y` (required) |
+| `swipe` | `start_x`, `start_y`, `end_x`, `end_y`, `duration` (optional) |
+| `input_text` | `text` (required) |
+| `take_screenshot` | None |
+| `force_stop_app` | `package_name` (required) |
+| `uninstall_app` | `package_name` (required) |
+| `install_app` | `apk_path` (required) |
+
 ## License
 
 MIT
