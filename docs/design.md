@@ -13,11 +13,22 @@
 - **显式权限**：提供权限状态查询，Agent 自主决策引导用户授权
 - **渐进式能力**：分层设计，首批支持核心能力，后续逐步扩展
 
+### 1.3 当前状态
+
+| 层级 | 状态 | 工具数 |
+|------|------|--------|
+| Tier 1 | ✅ 已完成 | 11 |
+| Tier 2 | ✅ 已完成 | 8 |
+| Tier 3 | ✅ 已完成 | 14 |
+| Tier 4 | 📋 规划中 | 8+ |
+
+**当前版本**: 2.0.0 | **总工具数**: 33
+
 ---
 
 ## 2. 工具清单
 
-### 2.1 Tier 1：核心能力（首批支持）
+### 2.1 Tier 1：核心能力 ✅
 
 **文件操作（5个）**
 
@@ -52,9 +63,10 @@
 
 **共计 11 个工具。**
 
-### 2.2 Tier 2：进阶能力（Roadmap）
+### 2.2 Tier 2：UI 交互与应用管理 ✅
 
-**UI 交互**
+**UI 交互（5个）**
+
 | 工具 | 说明 |
 |------|------|
 | `take_screenshot` | 截图 |
@@ -63,23 +75,69 @@
 | `input_text` | 输入文本 |
 | `get_ui_tree` | 获取界面控件结构 |
 
-**应用管理**
+**应用管理（3个）**
+
 | 工具 | 说明 |
 |------|------|
 | `install_app` | 安装应用 |
 | `uninstall_app` | 卸载应用 |
 | `force_stop_app` | 强制停止应用 |
 
-### 2.3 Tier 3：扩展能力（Roadmap）
+### 2.3 Tier 3：导航、等待与高级操作 ✅
 
-| 领域 | 工具 |
+**导航（3个）**
+
+| 工具 | 说明 |
 |------|------|
-| 剪贴板 | `get_clipboard`, `set_clipboard` |
-| 通知管理 | `list_notifications`, `post_notification` |
-| 媒体操作 | `take_photo`, `record_audio`, `play_media` |
-| 传感器 | `get_sensor_data` |
-| 短信/联系人 | `send_sms`, `list_contacts`（需敏感权限）|
-| 定位 | `get_location` |
+| `press_back` | 返回键 |
+| `press_home` | Home 键 |
+| `press_recents` | 最近任务键 |
+
+**输入（3个）**
+
+| 工具 | 说明 |
+|------|------|
+| `press_key` | 发送按键事件 |
+| `long_press` | 长按 |
+| `drag` | 拖拽 |
+
+**等待（2个）**
+
+| 工具 | 说明 |
+|------|------|
+| `wait_for_ui_stable` | 等待界面稳定 |
+| `wait_for_element` | 等待元素出现 |
+
+**状态查询（2个）**
+
+| 工具 | 说明 |
+|------|------|
+| `get_current_app` | 获取当前前台应用 |
+| `is_app_running` | 检查应用是否运行 |
+
+**剪贴板（2个）**
+
+| 工具 | 说明 |
+|------|------|
+| `get_clipboard` | 获取剪贴板内容 |
+| `set_clipboard` | 设置剪贴板内容 |
+
+**节点交互（2个）**
+
+| 工具 | 说明 |
+|------|------|
+| `click_node_by_text` | 通过文本点击节点 |
+| `click_node_by_id` | 通过资源 ID 点击节点 |
+
+### 2.4 Tier 4：扩展能力 📋
+
+| 领域 | 工具 | 优先级 |
+|------|------|--------|
+| 通知管理 | `list_notifications`, `post_notification` | P4 |
+| 媒体操作 | `take_photo`, `record_audio`, `play_media` | P4 |
+| 传感器 | `get_sensor_data` | P4 |
+| 短信/联系人 | `send_sms`, `list_contacts` | P4 |
+| 定位 | `get_location` | P4 |
 
 ---
 
@@ -477,14 +535,14 @@ Check the status of specified permissions.
 
 ---
 
-## 7. 交付形式（待定）
+## 7. 交付形式
 
-以下交付形式可在实现阶段确定：
-
-1. **Android SDK/库**：开发者集成到自己的 App 中
-2. **独立 App**：Agent 运行在这个 App 内
-3. **ADB 工具命令集**：供远程 Agent 通过 ADB 调用
-4. **MCP Server**：让任何支持 MCP 的 Agent 都能调用
+| 形式 | 状态 | 说明 |
+|------|------|------|
+| **Android SDK/库** | ✅ 已完成 | 开发者可集成到自己的 App 中 |
+| **独立 App** | 📋 规划中 | Agent 运行在这个 App 内 |
+| **ADB 工具命令集** | 📋 规划中 | 供远程 Agent 通过 ADB 调用 |
+| **MCP Server** | 📋 规划中 | 让任何支持 MCP 的 Agent 都能调用 |
 
 ---
 
@@ -494,3 +552,13 @@ Check the status of specified permissions.
 2. `list_directory` 是否需要支持分页？
 3. 是否需要提供文件监听能力（如 `watch_file`）？
 4. 国际化支持：错误消息是否需要多语言？
+
+---
+
+## 9. 变更历史
+
+| 版本 | 日期 | 变更内容 |
+|------|------|----------|
+| 2.0.0 | 2026-03-27 | 新增 Tier 3 工具：导航、等待、状态查询、剪贴板、节点交互 |
+| 1.1.0 | 2026-03-27 | 新增 Tier 2 工具：UI 交互、应用管理 |
+| 1.0.0 | 2026-03-27 | 初始版本：Tier 1 核心能力 |
