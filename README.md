@@ -6,7 +6,16 @@ A standardized toolkit for LLM agents to interact with Android devices.
 
 This project provides a set of tools that enable AI agents to operate Android devices, similar to how desktop agents use `read_file`/`write_file` to interact with computer systems.
 
+## Delivery Forms
+
+| Form | Status | Description |
+|------|--------|-------------|
+| **Android SDK** | ✅ Available | Integrate into your own Android app |
+| **MCP Server App** | ✅ Available | Standalone app exposing tools via HTTP |
+
 ## Quick Start
+
+### Using SDK
 
 ```kotlin
 // Initialize
@@ -22,6 +31,32 @@ val result = tools.execute("read_file", mapOf("path" to "/sdcard/test.txt"))
 val jsonResult = tools.executeJson("read_file", """{"path": "/sdcard/test.txt"}""")
 ```
 
+### Using MCP Server
+
+1. Build and install the MCP Server app:
+```bash
+./gradlew :mcp-server:installDebug
+```
+
+2. Open the app, grant Accessibility permission (for UI tools), and tap "Start Server"
+
+3. Access the server via HTTP:
+
+**WiFi (same network as your computer):**
+```bash
+# Get your phone's IP from the app
+curl -X POST http://<phone-ip>:8080/mcp/tools/list
+curl -X POST http://<phone-ip>:8080/mcp/tools/call \
+  -H "Content-Type: application/json" \
+  -d '{"name": "get_device_info", "arguments": {}}'
+```
+
+**USB (ADB port forwarding):**
+```bash
+adb forward tcp:8080 tcp:8080
+curl -X POST http://localhost:8080/mcp/tools/list
+```
+
 ## SDK Documentation
 
 See [sdk/README.md](sdk/README.md) for detailed SDK usage.
@@ -34,11 +69,71 @@ See [sdk/README.md](sdk/README.md) for detailed SDK usage.
 
 ```
 android-agent-tools/
-├── sdk/                    # Android SDK
+├── sdk/                    # Android SDK (library module)
 │   ├── src/main/          # Source code
 │   └── src/test/          # Unit tests
+├── mcp-server/            # MCP Server App (application module)
+│   └── src/main/          # HTTP server, UI, and service
 ├── schemas/               # JSON schemas for tools
 └── docs/                  # Documentation
+```
+
+## MCP Protocol
+
+The MCP Server implements the Model Context Protocol for tool discovery and execution:
+
+### List Tools
+```http
+POST /mcp/tools/list
+Content-Type: application/json
+
+{}
+```
+
+Response:
+```json
+{
+  "tools": [
+    {
+      "name": "tap",
+      "description": "Perform a tap at the specified coordinates.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x": { "type": "integer", "description": "X coordinate" },
+          "y": { "type": "integer", "description": "Y coordinate" }
+        },
+        "required": ["x", "y"]
+      }
+    }
+  ]
+}
+```
+
+### Call Tool
+```http
+POST /mcp/tools/call
+Content-Type: application/json
+
+{
+  "name": "tap",
+  "arguments": {
+    "x": 500,
+    "y": 800
+  }
+}
+```
+
+Response:
+```json
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"success\": true, \"data\": {}}"
+    }
+  ]
+}
 ```
 
 ## Features

@@ -540,9 +540,8 @@ Check the status of specified permissions.
 | 形式 | 状态 | 说明 |
 |------|------|------|
 | **Android SDK/库** | ✅ 已完成 | 开发者可集成到自己的 App 中 |
-| **独立 App** | 📋 规划中 | Agent 运行在这个 App 内 |
+| **MCP Server App** | ✅ 已完成 | 独立 App，通过 HTTP 暴露所有工具 |
 | **ADB 工具命令集** | 📋 规划中 | 供远程 Agent 通过 ADB 调用 |
-| **MCP Server** | 📋 规划中 | 让任何支持 MCP 的 Agent 都能调用 |
 
 ---
 
@@ -559,6 +558,6 @@ Check the status of specified permissions.
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| 2.0.0 | 2026-03-27 | 新增 Tier 3 工具：导航、等待、状态查询、剪贴板、节点交互 |
+| 2.0.0 | 2026-03-27 | 新增 Tier 3 工具：导航、等待、状态查询、剪贴板、节点交互；新增 MCP Server App |
 | 1.1.0 | 2026-03-27 | 新增 Tier 2 工具：UI 交互、应用管理 |
 | 1.0.0 | 2026-03-27 | 初始版本：Tier 1 核心能力 |
