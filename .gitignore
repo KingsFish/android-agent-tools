@@ -11,6 +11,8 @@ Thumbs.db
 build/
 dist/
 out/
+.gradle/
+local.properties
 
 # Dependencies
 node_modules/
