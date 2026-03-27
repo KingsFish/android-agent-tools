@@ -317,4 +317,85 @@ class AccessibilityNodeInfoUtilsTest {
         val result = AccessibilityNodeInfoUtils.getBoundsString(mockNode)
         assertEquals("[10,20][100,200]", result)
     }
+    // Tests for findNodeById (alias method)
+    @Test
+    fun `findNodeById finds node by resource id`() {
+        val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
+        val bounds = Rect(0, 0, 100, 100)
+
+        every { mockNode.getBoundsInScreen(any()) } answers {
+            (it.invocation.args[0] as Rect).set(bounds)
+        }
+        every { mockNode.viewIdResourceName } returns "com.example:id/button"
+        every { mockNode.isVisibleToUser } returns true
+        every { mockNode.childCount } returns 0
+
+        val result = AccessibilityNodeInfoUtils.findNodeById(mockNode, "com.example:id/button")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `findNodeById returns null when not found`() {
+        val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
+        val bounds = Rect(0, 0, 100, 100)
+
+        every { mockNode.getBoundsInScreen(any()) } answers {
+            (it.invocation.args[0] as Rect).set(bounds)
+        }
+        every { mockNode.viewIdResourceName } returns "com.example:id/other"
+        every { mockNode.isVisibleToUser } returns true
+        every { mockNode.childCount } returns 0
+
+        val result = AccessibilityNodeInfoUtils.findNodeById(mockNode, "com.example:id/button")
+        assertNull(result)
+    }
+
+    // Tests for findNodeByText
+    @Test
+    fun `findNodeByText finds node containing text`() {
+        val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
+        val bounds = Rect(0, 0, 100, 100)
+
+        every { mockNode.getBoundsInScreen(any()) } answers {
+            (it.invocation.args[0] as Rect).set(bounds)
+        }
+        every { mockNode.text } returns "Hello World"
+        every { mockNode.isVisibleToUser } returns true
+        every { mockNode.childCount } returns 0
+
+        val result = AccessibilityNodeInfoUtils.findNodeByText(mockNode, "World")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `findNodeByText is case insensitive`() {
+        val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
+        val bounds = Rect(0, 0, 100, 100)
+
+        every { mockNode.getBoundsInScreen(any()) } answers {
+            (it.invocation.args[0] as Rect).set(bounds)
+        }
+        every { mockNode.text } returns "Hello World"
+        every { mockNode.isVisibleToUser } returns true
+        every { mockNode.childCount } returns 0
+
+        val result = AccessibilityNodeInfoUtils.findNodeByText(mockNode, "HELLO")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `findNodeByText returns null when not found`() {
+        val mockNode = mockk<AccessibilityNodeInfo>(relaxed = true)
+        val bounds = Rect(0, 0, 100, 100)
+
+        every { mockNode.getBoundsInScreen(any()) } answers {
+            (it.invocation.args[0] as Rect).set(bounds)
+        }
+        every { mockNode.text } returns "Hello World"
+        every { mockNode.isVisibleToUser } returns true
+        every { mockNode.childCount } returns 0
+
+        val result = AccessibilityNodeInfoUtils.findNodeByText(mockNode, "Goodbye")
+        assertNull(result)
+    }
 }
