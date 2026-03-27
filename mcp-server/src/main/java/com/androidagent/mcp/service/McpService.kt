@@ -52,7 +52,6 @@ class McpService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        isRunning = true
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -64,8 +63,12 @@ class McpService : Service() {
             server = McpHttpServer(DEFAULT_PORT, tools!!)
             try {
                 server?.start()
+                isRunning = true
             } catch (e: Exception) {
                 e.printStackTrace()
+                server = null
+                tools = null
+                stopSelf()  // Stop the service if server fails to start
             }
         }
 
