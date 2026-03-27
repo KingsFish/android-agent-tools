@@ -20,7 +20,7 @@
 | Tier 1 | ✅ 已完成 | 11 |
 | Tier 2 | ✅ 已完成 | 8 |
 | Tier 3 | ✅ 已完成 | 14 |
-| Tier 4 | 📋 规划中 | 8+ |
+| Tier 4 | 📋 规划中 | 9+ |
 
 **当前版本**: 2.0.0 | **总工具数**: 33
 
@@ -133,11 +133,55 @@
 
 | 领域 | 工具 | 优先级 |
 |------|------|--------|
+| 文件监听 | `watch_file` | P3 |
 | 通知管理 | `list_notifications`, `post_notification` | P4 |
 | 媒体操作 | `take_photo`, `record_audio`, `play_media` | P4 |
 | 传感器 | `get_sensor_data` | P4 |
 | 短信/联系人 | `send_sms`, `list_contacts` | P4 |
 | 定位 | `get_location` | P4 |
+
+#### watch_file
+
+Watch a directory for file changes. Used for waiting async operations like download completion, file export, etc.
+
+**Parameters**
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| path | string | true | - | Absolute path to the directory to watch |
+| events | array[string] | false | ["create"] | Events to watch: `create`, `modify`, `delete` |
+| timeout | integer | false | 30000 | Timeout in milliseconds |
+
+**Events**
+- `create`: File created in the directory
+- `modify`: File content modified
+- `delete`: File deleted
+
+**Example**
+```json
+// Request - Wait for a file to appear in Downloads
+{"path": "/sdcard/Download", "events": ["create"], "timeout": 60000}
+
+// Response - File created
+{
+  "success": true,
+  "data": {
+    "event": "create",
+    "file_name": "result.json",
+    "triggered_at": 1711324800000
+  }
+}
+
+// Response - Timeout
+{
+  "success": false,
+  "error": {
+    "code": "WATCH_TIMEOUT",
+    "message": "No event triggered within 60000ms"
+  }
+}
+```
+
+**Requirements**: Requires storage permission for the target directory. Uses Android FileObserver (inotify).
 
 ---
 
@@ -518,6 +562,8 @@ Check the status of specified permissions.
 
 ### 6.2 权限与工具映射
 
+**Tier 1 工具**
+
 | 工具 | 所需权限 |
 |------|----------|
 | `read_file` (私有目录) | 无 |
@@ -532,6 +578,39 @@ Check the status of specified permissions.
 | `launch_app` | 无 |
 | `get_device_info` | 无 |
 | `get_battery_status` | 无 |
+| `check_permissions` | 无 |
+
+**Tier 2 工具**
+
+| 工具 | 所需权限/能力 |
+|------|--------------|
+| `get_ui_tree` | Accessibility Service |
+| `tap` | ROOT 或 Accessibility Service |
+| `swipe` | ROOT 或 Accessibility Service |
+| `input_text` | Accessibility Service |
+| `take_screenshot` | ROOT 或 Media Projection (Android 11+) |
+| `install_app` | ROOT |
+| `uninstall_app` | ROOT |
+| `force_stop_app` | ROOT |
+
+**Tier 3 工具**
+
+| 工具 | 所需权限/能力 |
+|------|--------------|
+| `press_back` | ROOT 或 Accessibility Service |
+| `press_home` | ROOT 或 Accessibility Service |
+| `press_recents` | ROOT 或 Accessibility Service |
+| `press_key` (非导航键) | ROOT |
+| `long_press` | ROOT 或 Accessibility Service |
+| `drag` | ROOT 或 Accessibility Service |
+| `wait_for_ui_stable` | Accessibility Service |
+| `wait_for_element` | Accessibility Service |
+| `get_current_app` | Accessibility Service |
+| `is_app_running` | Accessibility Service |
+| `get_clipboard` | Accessibility Service |
+| `set_clipboard` | Accessibility Service |
+| `click_node_by_text` | Accessibility Service |
+| `click_node_by_id` | Accessibility Service |
 
 ---
 
@@ -543,14 +622,44 @@ Check the status of specified permissions.
 | **MCP Server App** | ✅ 已完成 | 独立 App，通过 HTTP 暴露所有工具 |
 | **ADB 工具命令集** | 📋 规划中 | 供远程 Agent 通过 ADB 调用 |
 
+### 7.1 MCP Server App
+
+MCP Server App 是一个独立的 Android 应用，通过 HTTP 协议暴露所有工具，供远程 Agent 调用。
+
+**架构**
+
+```
+mcp-server/
+├── MainActivity.kt         # UI 入口（启动/停止服务）
+├── McpService.kt           # 后台服务（运行 HTTP Server）
+├── McpHttpServer.kt        # NanoHTTPD 实现
+├── McpProtocol.kt          # MCP 协议处理
+└── ToolSchemaGenerator.kt  # 工具 Schema 定义
+```
+
+**端点**
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/health` | GET | 健康检查 |
+| `/mcp/tools/list` | POST | 获取工具列表 |
+| `/mcp/tools/call` | POST | 执行工具 |
+
+**使用方式**
+
+1. WiFi（同网络）：直接访问手机 IP + 端口 8080
+2. USB（ADB 转发）：`adb forward tcp:8080 tcp:8080`
+
 ---
 
 ## 8. 开放问题
 
 1. 是否需要支持二进制文件的读写？
 2. `list_directory` 是否需要支持分页？
-3. 是否需要提供文件监听能力（如 `watch_file`）？
+3. ~~是否需要提供文件监听能力（如 `watch_file`）？~~ → 已在 Tier 4 规划
 4. 国际化支持：错误消息是否需要多语言？
+5. MCP Server 是否需要支持 WebSocket 实时通信？
+6. 是否需要提供 ADB 命令行工具集？
 
 ---
 
