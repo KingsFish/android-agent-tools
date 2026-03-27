@@ -333,11 +333,15 @@ class AgentAccessibilityService : AccessibilityService() {
             val rootNode = rootInActiveWindow
             if (rootNode != null) {
                 val found = AccessibilityNodeInfoUtils.findNodeByText(rootNode, text)
-                rootNode.recycle()
                 if (found != null) {
+                    // Only recycle nodes if they are different objects
+                    if (found != rootNode) {
+                        rootNode.recycle()
+                    }
                     found.recycle()
                     return true
                 }
+                rootNode.recycle()
             }
             delay(checkIntervalMs)
         }
@@ -354,11 +358,15 @@ class AgentAccessibilityService : AccessibilityService() {
             val rootNode = rootInActiveWindow
             if (rootNode != null) {
                 val found = AccessibilityNodeInfoUtils.findNodeByResourceId(rootNode, resourceId)
-                rootNode.recycle()
                 if (found != null) {
+                    // Only recycle nodes if they are different objects
+                    if (found != rootNode) {
+                        rootNode.recycle()
+                    }
                     found.recycle()
                     return true
                 }
+                rootNode.recycle()
             }
             delay(checkIntervalMs)
         }
@@ -449,8 +457,13 @@ class AgentAccessibilityService : AccessibilityService() {
         }
 
         val result = performNodeClick(node)
-        node.recycle()
-        rootNode.recycle()
+        // Only recycle nodes if they are different objects
+        if (node != rootNode) {
+            node.recycle()
+            rootNode.recycle()
+        } else {
+            node.recycle()
+        }
         return result
     }
 
@@ -467,8 +480,13 @@ class AgentAccessibilityService : AccessibilityService() {
         }
 
         val result = performNodeClick(node)
-        node.recycle()
-        rootNode.recycle()
+        // Only recycle nodes if they are different objects
+        if (node != rootNode) {
+            node.recycle()
+            rootNode.recycle()
+        } else {
+            node.recycle()
+        }
         return result
     }
 
