@@ -32,9 +32,11 @@ dependencies {
 
     // Testing
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("org.json:json:20231013")
+    testImplementation("org.robolectric:robolectric:4.11.1")
 
     // Android instrumentation testing
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
