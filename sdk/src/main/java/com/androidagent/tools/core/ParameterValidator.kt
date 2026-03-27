@@ -22,6 +22,20 @@ class ParameterValidator(private val params: Map<String, Any?>) {
         }
     }
 
+    /**
+     * Requires a non-empty string parameter.
+     * Validates that the parameter exists, is a string, and is not blank.
+     */
+    fun requireNonEmptyString(key: String): Result<String> {
+        val value = params[key]
+        return when {
+            value == null -> Result.Failure(ToolError.INVALID_PARAMETER, "Missing required parameter: $key")
+            value !is String -> Result.Failure(ToolError.INVALID_PARAMETER, "Parameter '$key' must be a string")
+            value.isBlank() -> Result.Failure(ToolError.INVALID_PARAMETER, "Parameter '$key' must not be empty")
+            else -> Result.Success(value)
+        }
+    }
+
     fun optionalString(key: String, default: String): String {
         val value = params[key]
         return when {

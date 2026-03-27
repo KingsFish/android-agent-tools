@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.view.accessibility.AccessibilityManager
 
 /**
  * 环境检测器

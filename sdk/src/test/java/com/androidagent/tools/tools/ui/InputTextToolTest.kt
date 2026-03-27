@@ -26,9 +26,9 @@ class InputTextToolTest {
     }
 
     @Test
-    fun `validate succeeds with empty text`() {
+    fun `validate fails with empty text`() {
         val result = tool.validate(mapOf("text" to ""))
-        assertTrue(result.isSuccess)
+        assertTrue(result.isFailure)
     }
 
     @Test

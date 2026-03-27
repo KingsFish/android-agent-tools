@@ -9,7 +9,7 @@ class UninstallAppTool : Tool {
 
     override fun validate(params: Map<String, Any?>): Result<Unit> {
         val validator = ParameterValidator(params)
-        return when (val result = validator.requireString("package_name")) {
+        return when (val result = validator.requireNonEmptyString("package_name")) {
             is Result.Success -> Result.Success(Unit)
             is Result.Failure -> Result.Failure(result.error, result.context)
         }
@@ -17,7 +17,7 @@ class UninstallAppTool : Tool {
 
     override suspend fun execute(context: Context, params: Map<String, Any?>): ToolResult {
         val validator = ParameterValidator(params)
-        val packageName = (validator.requireString("package_name") as Result.Success).value
+        val packageName = (validator.requireNonEmptyString("package_name") as Result.Success).value
 
         try {
             context.packageManager.getPackageInfo(packageName, 0)
