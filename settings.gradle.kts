@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "android-agent-tools"
 include(":sdk")
+include(":mcp-server")

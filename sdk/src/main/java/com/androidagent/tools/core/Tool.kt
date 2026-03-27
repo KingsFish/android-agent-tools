@@ -6,6 +6,7 @@ import org.json.JSONObject
 interface Tool {
     val name: String
     val description: String
+    val inputSchema: Map<String, Any?> get() = emptyMap()  // JSON Schema for input parameters
 
     fun validate(params: Map<String, Any?>): Result<Unit>
 
