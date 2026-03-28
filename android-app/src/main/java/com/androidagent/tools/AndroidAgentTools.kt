@@ -41,7 +41,7 @@ import com.androidagent.tools.tools.wait.WaitForUiStableTool
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 
-class AndroidAgentTools(private val context: Context) {
+class AndroidAgentTools(private val context: Context) : com.androidagent.core.ToolRegistry {
 
     private val executor = ToolExecutor()
 
@@ -86,7 +86,16 @@ class AndroidAgentTools(private val context: Context) {
         executor.register(ClickNodeByIdTool())
     }
 
-    fun listTools(): List<String> = executor.listTools()
+    // ToolRegistry implementation
+    override fun register(tool: com.androidagent.core.Tool) {
+        executor.register(tool)
+    }
+
+    override fun getTool(name: String): com.androidagent.core.Tool? = executor.getTool(name)
+
+    override fun listTools(): List<String> = executor.listTools()
+
+    override fun getAllTools(): List<com.androidagent.core.Tool> = executor.getAllTools()
 
     suspend fun execute(toolName: String, params: Map<String, Any?>): ToolResult {
         val toolContext = AppToolContext.create(context)

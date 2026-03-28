@@ -1,19 +1,19 @@
 package com.androidagent.tools.tools.ui
 
-import com.androidagent.tools.core.Capability
 import com.androidagent.core.ToolError
 import com.androidagent.core.ToolResult
 import com.androidagent.tools.accessibility.AgentAccessibilityService
-import com.androidagent.tools.core.EnvironmentDetector
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.spyk
 import io.mockk.unmockkObject
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import android.content.Context
+import com.androidagent.androidapp.AppToolContext
 
 class GetUiTreeToolTest {
     private val tool = GetUiTreeTool()
@@ -46,10 +46,13 @@ class GetUiTreeToolTest {
     @Test
     fun `execute fails when accessibility service not running`() {
         val mockContext = mockk<Context>(relaxed = true)
+        val mockToolContext = spyk(AppToolContext(mockContext))
+
         every { AgentAccessibilityService.instance } returns null
+        every { mockToolContext.getAccessibilityService() } returns null
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, emptyMap())
+            tool.execute(mockToolContext, emptyMap())
         }
 
         assertTrue(result is ToolResult.Failure)
@@ -60,8 +63,10 @@ class GetUiTreeToolTest {
     fun `execute succeeds when accessibility service is running`() {
         val mockContext = mockk<Context>(relaxed = true)
         val mockService = mockk<AgentAccessibilityService>()
+        val mockToolContext = spyk(AppToolContext(mockContext))
 
         every { AgentAccessibilityService.instance } returns mockService
+        every { mockToolContext.getAccessibilityService() } returns mockService
         every { mockService.getUiTree(any(), any()) } returns mapOf(
             "nodes" to emptyList<Map<String, Any?>>(),
             "package_name" to "com.example",
@@ -69,7 +74,7 @@ class GetUiTreeToolTest {
         )
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, emptyMap())
+            tool.execute(mockToolContext, emptyMap())
         }
 
         assertTrue(result is ToolResult.Success)
@@ -79,12 +84,14 @@ class GetUiTreeToolTest {
     fun `execute fails when getUiTree returns null`() {
         val mockContext = mockk<Context>(relaxed = true)
         val mockService = mockk<AgentAccessibilityService>()
+        val mockToolContext = spyk(AppToolContext(mockContext))
 
         every { AgentAccessibilityService.instance } returns mockService
+        every { mockToolContext.getAccessibilityService() } returns mockService
         every { mockService.getUiTree(any(), any()) } returns null
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, emptyMap())
+            tool.execute(mockToolContext, emptyMap())
         }
 
         assertTrue(result is ToolResult.Failure)

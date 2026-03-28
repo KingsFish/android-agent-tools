@@ -2,13 +2,14 @@ package com.androidagent.tools.tools.ui
 
 import com.androidagent.core.ToolError
 import com.androidagent.core.ToolResult
-import com.androidagent.tools.core.EnvironmentDetector
+import com.androidagent.androidapp.EnvironmentDetector
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import android.content.Context
+import com.androidagent.androidapp.AppToolContext
 
 class SwipeToolTest {
     private val tool = SwipeTool()
@@ -84,7 +85,7 @@ class SwipeToolTest {
         every { anyConstructed<EnvironmentDetector>().hasRoot() } returns false
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf(
+            tool.execute(AppToolContext(mockContext), mapOf(
                 "start_x" to 0,
                 "start_y" to 100,
                 "end_x" to 200,

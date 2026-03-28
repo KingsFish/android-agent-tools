@@ -1,7 +1,10 @@
 package com.androidagent.mcp.server
 
-import com.androidagent.tools.core.ToolError
-import com.androidagent.tools.core.ToolResult
+import com.androidagent.core.Tool
+import com.androidagent.core.ToolSchema
+import com.androidagent.core.SchemaProperty
+import com.androidagent.core.ToolError
+import com.androidagent.core.ToolResult
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.DisplayName
@@ -20,10 +23,6 @@ class McpProtocolTest {
         @Test
         @DisplayName("Should create valid tools list response structure")
         fun testToolsListResponseStructure() {
-            // This test verifies the structure of the response
-            // We can't test with real AndroidAgentTools without Android context
-            // So we test the response parsing
-
             val sampleResponse = """
                 {
                     "tools": [
@@ -72,7 +71,6 @@ class McpProtocolTest {
             assertEquals("text", contentItem.getString("type"))
             assertTrue(contentItem.has("text"))
 
-            // Parse the inner text to verify it's valid JSON
             val innerJson = JSONObject(contentItem.getString("text"))
             assertTrue(innerJson.getBoolean("success"))
         }

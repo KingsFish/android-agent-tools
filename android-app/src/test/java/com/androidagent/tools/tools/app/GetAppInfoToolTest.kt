@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
+import com.androidagent.androidapp.AppToolContext
 
 class GetAppInfoToolTest {
     private val tool = GetAppInfoTool()
@@ -32,7 +33,7 @@ class GetAppInfoToolTest {
         every { mockPackageManager.getPackageInfo("com.nonexistent.app", PackageManager.GET_PERMISSIONS or PackageManager.GET_META_DATA) } throws PackageManager.NameNotFoundException()
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("package_name" to "com.nonexistent.app"))
+            tool.execute(AppToolContext(mockContext), mapOf("package_name" to "com.nonexistent.app"))
         }
 
         assertTrue(result is ToolResult.Failure)
@@ -61,7 +62,7 @@ class GetAppInfoToolTest {
         every { mockPackageManager.getApplicationLabel(mockAppInfo) } returns "Example App"
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("package_name" to "com.example.app"))
+            tool.execute(AppToolContext(mockContext), mapOf("package_name" to "com.example.app"))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -97,7 +98,7 @@ class GetAppInfoToolTest {
         every { mockPackageManager.getApplicationLabel(mockAppInfo) } returns "System App"
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("package_name" to "com.system.app"))
+            tool.execute(AppToolContext(mockContext), mapOf("package_name" to "com.system.app"))
         }
 
         assertTrue(result is ToolResult.Success)

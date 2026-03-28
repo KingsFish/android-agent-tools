@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import android.content.Context
 import com.androidagent.tools.accessibility.AgentAccessibilityService
-import com.androidagent.tools.core.EnvironmentDetector
+import com.androidagent.androidapp.EnvironmentDetector
+import com.androidagent.androidapp.AppToolContext
 
 class PressKeyToolTest {
     private val tool = PressKeyTool()
@@ -39,7 +40,7 @@ class PressKeyToolTest {
         every { anyConstructed<EnvironmentDetector>().hasRoot() } returns false
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("key_name" to "unknown_key"))
+            tool.execute(AppToolContext(mockContext), mapOf("key_name" to "unknown_key"))
         }
 
         assertTrue(result is ToolResult.Failure)
@@ -54,7 +55,7 @@ class PressKeyToolTest {
         every { anyConstructed<EnvironmentDetector>().hasRoot() } returns false
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("key_code" to 66))
+            tool.execute(AppToolContext(mockContext), mapOf("key_code" to 66))
         }
 
         assertTrue(result is ToolResult.Failure)

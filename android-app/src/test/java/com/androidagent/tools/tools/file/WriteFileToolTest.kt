@@ -6,6 +6,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
+import com.androidagent.androidapp.AppToolContext
 
 class WriteFileToolTest {
 
@@ -36,7 +37,7 @@ class WriteFileToolTest {
         val testFile = File(tempDir, "write_test_${System.currentTimeMillis()}.txt")
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf(
+            tool.execute(AppToolContext(mockContext), mapOf(
                 "path" to testFile.absolutePath,
                 "content" to "Hello, World!"
             ))
@@ -55,7 +56,7 @@ class WriteFileToolTest {
         tempFile.writeText("Original")
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf(
+            tool.execute(AppToolContext(mockContext), mapOf(
                 "path" to tempFile.absolutePath,
                 "content" to "New Content"
             ))

@@ -8,6 +8,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
+import com.androidagent.androidapp.AppToolContext
 
 class GetDeviceInfoToolTest {
     private val tool = GetDeviceInfoTool()
@@ -40,7 +41,7 @@ class GetDeviceInfoToolTest {
         every { mockContext.resources.configuration } returns mockk(relaxed = true)
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, emptyMap())
+            tool.execute(AppToolContext(mockContext), emptyMap())
         }
 
         assertTrue(result is ToolResult.Success)

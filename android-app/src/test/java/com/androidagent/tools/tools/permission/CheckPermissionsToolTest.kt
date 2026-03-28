@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
+import com.androidagent.androidapp.AppToolContext
 
 class CheckPermissionsToolTest {
     private val tool = CheckPermissionsTool()
@@ -38,7 +39,7 @@ class CheckPermissionsToolTest {
         every { mockContext.checkSelfPermission("android.permission.CAMERA") } returns PackageManager.PERMISSION_DENIED
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("permissions" to listOf("storage", "camera")))
+            tool.execute(AppToolContext(mockContext), mapOf("permissions" to listOf("storage", "camera")))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -56,7 +57,7 @@ class CheckPermissionsToolTest {
         every { mockContext.checkSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE") } returns PackageManager.PERMISSION_DENIED
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("permissions" to listOf("storage")))
+            tool.execute(AppToolContext(mockContext), mapOf("permissions" to listOf("storage")))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -69,7 +70,7 @@ class CheckPermissionsToolTest {
         val mockContext = mockk<android.content.Context>()
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("permissions" to listOf("unknown_permission")))
+            tool.execute(AppToolContext(mockContext), mapOf("permissions" to listOf("unknown_permission")))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -88,7 +89,7 @@ class CheckPermissionsToolTest {
         every { mockContext.checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION") } returns PackageManager.PERMISSION_GRANTED
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("permissions" to listOf("storage", "camera", "location", "unknown_perm")))
+            tool.execute(AppToolContext(mockContext), mapOf("permissions" to listOf("storage", "camera", "location", "unknown_perm")))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -131,7 +132,7 @@ class CheckPermissionsToolTest {
         every { mockContext.checkSelfPermission("android.permission.CALL_PHONE") } returns PackageManager.PERMISSION_GRANTED
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("permissions" to listOf("storage", "camera", "location", "microphone", "contacts", "sms", "phone")))
+            tool.execute(AppToolContext(mockContext), mapOf("permissions" to listOf("storage", "camera", "location", "microphone", "contacts", "sms", "phone")))
         }
 
         assertTrue(result is ToolResult.Success)

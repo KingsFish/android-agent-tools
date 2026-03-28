@@ -7,6 +7,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
+import com.androidagent.androidapp.AppToolContext
 
 class ReadFileToolTest {
 
@@ -17,7 +18,7 @@ class ReadFileToolTest {
     fun `validate fails when path is missing`() {
         val result = tool.validate(emptyMap())
         assertTrue(result.isFailure)
-        assertEquals(ToolError.INVALID_PARAMETER, (result as? com.androidagent.tools.core.Result.Failure<*>)?.error)
+        assertEquals(ToolError.INVALID_PARAMETER, (result as? com.androidagent.core.ValidationResult.Failure)?.error)
     }
 
     @Test
@@ -29,7 +30,7 @@ class ReadFileToolTest {
     @Test
     fun `execute fails when file does not exist`() {
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("path" to "/nonexistent/file.txt"))
+            tool.execute(AppToolContext(mockContext), mapOf("path" to "/nonexistent/file.txt"))
         }
         assertTrue(result is ToolResult.Failure)
         assertEquals(ToolError.FILE_NOT_FOUND, (result as ToolResult.Failure).error)
@@ -42,7 +43,7 @@ class ReadFileToolTest {
         tempFile.writeText("Hello, World!")
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("path" to tempFile.absolutePath))
+            tool.execute(AppToolContext(mockContext), mapOf("path" to tempFile.absolutePath))
         }
 
         assertTrue(result is ToolResult.Success)

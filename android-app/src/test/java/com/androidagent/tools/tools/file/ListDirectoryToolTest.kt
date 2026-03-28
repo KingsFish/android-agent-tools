@@ -6,6 +6,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
+import com.androidagent.androidapp.AppToolContext
 
 class ListDirectoryToolTest {
     private val tool = ListDirectoryTool()
@@ -20,7 +21,7 @@ class ListDirectoryToolTest {
     @Test
     fun `execute fails when directory does not exist`() {
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("path" to "/nonexistent/dir"))
+            tool.execute(AppToolContext(mockContext), mapOf("path" to "/nonexistent/dir"))
         }
         assertTrue(result is ToolResult.Failure)
         assertEquals(ToolError.DIRECTORY_NOT_FOUND, (result as ToolResult.Failure).error)
@@ -34,7 +35,7 @@ class ListDirectoryToolTest {
         File(tempDir, "subdir").mkdirs()
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("path" to tempDir.absolutePath))
+            tool.execute(AppToolContext(mockContext), mapOf("path" to tempDir.absolutePath))
         }
 
         assertTrue(result is ToolResult.Success)

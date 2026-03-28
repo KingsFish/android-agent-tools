@@ -6,6 +6,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
+import com.androidagent.androidapp.AppToolContext
 
 class DeleteFileToolTest {
     private val tool = DeleteFileTool()
@@ -17,7 +18,7 @@ class DeleteFileToolTest {
         assertTrue(tempFile.exists())
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("path" to tempFile.absolutePath))
+            tool.execute(AppToolContext(mockContext), mapOf("path" to tempFile.absolutePath))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -27,7 +28,7 @@ class DeleteFileToolTest {
     @Test
     fun `execute fails when file does not exist`() {
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("path" to "/nonexistent/file.txt"))
+            tool.execute(AppToolContext(mockContext), mapOf("path" to "/nonexistent/file.txt"))
         }
         assertTrue(result is ToolResult.Failure)
         assertEquals(ToolError.FILE_NOT_FOUND, (result as ToolResult.Failure).error)

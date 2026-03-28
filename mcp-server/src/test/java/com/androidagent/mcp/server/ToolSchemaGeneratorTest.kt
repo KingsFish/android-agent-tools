@@ -1,5 +1,11 @@
 package com.androidagent.mcp.server
 
+import com.androidagent.core.Tool
+import com.androidagent.core.ToolSchema
+import com.androidagent.core.SchemaProperty
+import com.androidagent.core.ToolContext
+import com.androidagent.core.ToolResult
+import com.androidagent.core.ValidationResult
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.DisplayName
@@ -11,6 +17,26 @@ import org.junit.jupiter.api.Assertions.*
  */
 class ToolSchemaGeneratorTest {
 
+    // Helper to create mock tools for testing
+    private fun createMockTool(
+        name: String,
+        description: String,
+        properties: Map<String, SchemaProperty>,
+        required: List<String>
+    ): Tool {
+        return object : Tool {
+            override val name = name
+            override val description = description
+            override val inputSchema = ToolSchema(
+                properties = properties,
+                required = required
+            )
+            override fun validate(params: Map<String, Any?>): ValidationResult = ValidationResult.success()
+            override suspend fun execute(context: ToolContext, params: Map<String, Any?>): ToolResult =
+                ToolResult.success(emptyMap())
+        }
+    }
+
     @Nested
     @DisplayName("Tool Schema Generation")
     inner class SchemaGeneration {
@@ -18,7 +44,16 @@ class ToolSchemaGeneratorTest {
         @Test
         @DisplayName("Should generate schema for read_file tool")
         fun testReadFileSchema() {
-            val schema = ToolSchemaGenerator.generateToolSchema("read_file")
+            val tool = createMockTool(
+                "read_file",
+                "Read the content of a file.",
+                mapOf(
+                    "path" to SchemaProperty(type = "string", description = "File path"),
+                    "encoding" to SchemaProperty(type = "string", description = "Encoding", default = "utf-8")
+                ),
+                listOf("path")
+            )
+            val schema = ToolSchemaGenerator.generateToolSchema(tool)
 
             assertEquals("read_file", schema["name"])
             assertTrue(schema["description"].toString().contains("Read the content"))
@@ -37,7 +72,16 @@ class ToolSchemaGeneratorTest {
         @Test
         @DisplayName("Should generate schema for tap tool")
         fun testTapSchema() {
-            val schema = ToolSchemaGenerator.generateToolSchema("tap")
+            val tool = createMockTool(
+                "tap",
+                "Perform a tap at coordinates.",
+                mapOf(
+                    "x" to SchemaProperty(type = "integer", description = "X coordinate"),
+                    "y" to SchemaProperty(type = "integer", description = "Y coordinate")
+                ),
+                listOf("x", "y")
+            )
+            val schema = ToolSchemaGenerator.generateToolSchema(tool)
 
             assertEquals("tap", schema["name"])
 
@@ -57,7 +101,13 @@ class ToolSchemaGeneratorTest {
         @Test
         @DisplayName("Should generate schema for get_device_info tool with no parameters")
         fun testGetDeviceInfoSchema() {
-            val schema = ToolSchemaGenerator.generateToolSchema("get_device_info")
+            val tool = createMockTool(
+                "get_device_info",
+                "Get device information.",
+                emptyMap(),
+                emptyList()
+            )
+            val schema = ToolSchemaGenerator.generateToolSchema(tool)
 
             assertEquals("get_device_info", schema["name"])
 
@@ -69,7 +119,19 @@ class ToolSchemaGeneratorTest {
         @Test
         @DisplayName("Should generate schema for check_permissions tool with array parameter")
         fun testCheckPermissionsSchema() {
-            val schema = ToolSchemaGenerator.generateToolSchema("check_permissions")
+            val tool = createMockTool(
+                "check_permissions",
+                "Check granted permissions.",
+                mapOf(
+                    "permissions" to SchemaProperty(
+                        type = "array",
+                        description = "Permissions to check",
+                        items = SchemaProperty(type = "string")
+                    )
+                ),
+                emptyList()
+            )
+            val schema = ToolSchemaGenerator.generateToolSchema(tool)
 
             assertEquals("check_permissions", schema["name"])
 
@@ -79,15 +141,6 @@ class ToolSchemaGeneratorTest {
 
             val permProp = properties["permissions"] as Map<*, *>
             assertEquals("array", permProp["type"])
-        }
-
-        @Test
-        @DisplayName("Should return unknown tool schema for unrecognized tool")
-        fun testUnknownToolSchema() {
-            val schema = ToolSchemaGenerator.generateToolSchema("nonexistent_tool")
-
-            assertEquals("nonexistent_tool", schema["name"])
-            assertEquals("Unknown tool", schema["description"])
         }
     }
 
@@ -106,7 +159,8 @@ class ToolSchemaGeneratorTest {
             )
 
             tier1Tools.forEach { toolName ->
-                val schema = ToolSchemaGenerator.generateToolSchema(toolName)
+                val tool = createMockTool(toolName, "Test description", emptyMap(), emptyList())
+                val schema = ToolSchemaGenerator.generateToolSchema(tool)
                 assertNotNull(schema["name"])
                 assertNotNull(schema["description"])
                 assertNotNull(schema["inputSchema"])
@@ -122,7 +176,8 @@ class ToolSchemaGeneratorTest {
             )
 
             tier2Tools.forEach { toolName ->
-                val schema = ToolSchemaGenerator.generateToolSchema(toolName)
+                val tool = createMockTool(toolName, "Test description", emptyMap(), emptyList())
+                val schema = ToolSchemaGenerator.generateToolSchema(tool)
                 assertNotNull(schema["name"])
                 assertNotNull(schema["description"])
                 assertNotNull(schema["inputSchema"])
@@ -142,7 +197,8 @@ class ToolSchemaGeneratorTest {
             )
 
             tier3Tools.forEach { toolName ->
-                val schema = ToolSchemaGenerator.generateToolSchema(toolName)
+                val tool = createMockTool(toolName, "Test description", emptyMap(), emptyList())
+                val schema = ToolSchemaGenerator.generateToolSchema(tool)
                 assertNotNull(schema["name"])
                 assertNotNull(schema["description"])
                 assertNotNull(schema["inputSchema"])

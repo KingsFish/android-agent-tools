@@ -4,12 +4,13 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.androidagent.core.ToolError
 import com.androidagent.core.ToolResult
-import com.androidagent.tools.core.EnvironmentDetector
+import com.androidagent.androidapp.AndroidCapability
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkConstructor
+import io.mockk.spyk
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import com.androidagent.androidapp.AppToolContext
 
 class ForceStopAppToolTest {
     private val tool = ForceStopAppTool()
@@ -30,14 +31,15 @@ class ForceStopAppToolTest {
     fun `execute fails when app not found`() {
         val mockContext = mockk<Context>(relaxed = true)
         val mockPackageManager = mockk<PackageManager>()
+        val mockToolContext = spyk(AppToolContext(mockContext))
 
         every { mockContext.packageManager } returns mockPackageManager
         every { mockContext.packageName } returns "com.test"
-        every { mockPackageManager.getPackageInfo("com.example.app", 0) } throws 
+        every { mockPackageManager.getPackageInfo("com.example.app", 0) } throws
             PackageManager.NameNotFoundException()
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("package_name" to "com.example.app"))
+            tool.execute(mockToolContext, mapOf("package_name" to "com.example.app"))
         }
 
         assertTrue(result is ToolResult.Failure)
@@ -48,16 +50,15 @@ class ForceStopAppToolTest {
     fun `execute fails when no ROOT access`() {
         val mockContext = mockk<Context>(relaxed = true)
         val mockPackageManager = mockk<PackageManager>()
+        val mockToolContext = spyk(AppToolContext(mockContext))
 
         every { mockContext.packageManager } returns mockPackageManager
         every { mockContext.packageName } returns "com.test"
         every { mockPackageManager.getPackageInfo("com.example.app", 0) } returns mockk()
-
-        mockkConstructor(EnvironmentDetector::class)
-        every { anyConstructed<EnvironmentDetector>().hasRoot() } returns false
+        every { mockToolContext.hasCapability(AndroidCapability.ROOT) } returns false
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("package_name" to "com.example.app"))
+            tool.execute(mockToolContext, mapOf("package_name" to "com.example.app"))
         }
 
         assertTrue(result is ToolResult.Failure)

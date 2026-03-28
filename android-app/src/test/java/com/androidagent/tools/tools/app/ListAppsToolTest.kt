@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
+import com.androidagent.androidapp.AppToolContext
 
 class ListAppsToolTest {
     private val tool = ListAppsTool()
@@ -42,7 +43,7 @@ class ListAppsToolTest {
         every { mockPackageManager.getPackageInfo("com.example.app", 0) } returns mockPackageInfo
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, emptyMap())
+            tool.execute(AppToolContext(mockContext), emptyMap())
         }
 
         assertTrue(result is ToolResult.Success)
@@ -73,7 +74,7 @@ class ListAppsToolTest {
         every { mockPackageManager.getPackageInfo("com.example.app", 0) } returns mockPackageInfo
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, emptyMap())
+            tool.execute(AppToolContext(mockContext), emptyMap())
         }
 
         assertTrue(result is ToolResult.Success)
@@ -107,7 +108,7 @@ class ListAppsToolTest {
         every { mockPackageManager.getPackageInfo("com.user.app", 0) } returns mockPackageInfo
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("include_system_apps" to false))
+            tool.execute(AppToolContext(mockContext), mapOf("include_system_apps" to false))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -146,7 +147,7 @@ class ListAppsToolTest {
         every { mockPackageManager.getPackageInfo("com.user.app", 0) } returns mockUserPackageInfo
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("include_system_apps" to true))
+            tool.execute(AppToolContext(mockContext), mapOf("include_system_apps" to true))
         }
 
         assertTrue(result is ToolResult.Success)

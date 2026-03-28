@@ -1,5 +1,6 @@
 package com.androidagent.tools.tools.appmgmt
 
+import android.content.pm.PackageManager
 import com.androidagent.core.*
 import com.androidagent.androidapp.AndroidCapability
 import com.androidagent.androidapp.AppToolContext
@@ -23,6 +24,16 @@ class UninstallAppTool : Tool {
         val validator = ParameterValidator(params)
         val packageName = validator.getString("package_name")
             ?: return ToolResult.failure(ToolError.INVALID_PARAMETER, "Missing package_name")
+
+        val appContext = context as? AppToolContext
+            ?: return ToolResult.failure(ToolError.UNSUPPORTED_OPERATION, "Requires Android context")
+
+        // Check if app exists
+        try {
+            appContext.getAndroidContext().packageManager.getPackageInfo(packageName, 0)
+        } catch (e: PackageManager.NameNotFoundException) {
+            return ToolResult.failure(ToolError.APP_NOT_FOUND)
+        }
 
         if (!context.hasCapability(AndroidCapability.ROOT)) {
             return ToolResult.failure(ToolError.ROOT_REQUIRED)

@@ -8,6 +8,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
+import com.androidagent.androidapp.AppToolContext
 
 class GetBatteryStatusToolTest {
     private val tool = GetBatteryStatusTool()
@@ -32,7 +33,7 @@ class GetBatteryStatusToolTest {
         every { mockIntent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) } returns 4200
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, emptyMap())
+            tool.execute(AppToolContext(mockContext), emptyMap())
         }
 
         assertTrue(result is ToolResult.Success)

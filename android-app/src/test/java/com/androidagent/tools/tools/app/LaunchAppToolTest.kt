@@ -9,6 +9,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
+import com.androidagent.androidapp.AppToolContext
 
 class LaunchAppToolTest {
     private val tool = LaunchAppTool()
@@ -36,7 +37,7 @@ class LaunchAppToolTest {
         every { mockContext.startActivity(any()) } returns Unit
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("package_name" to "com.example.app"))
+            tool.execute(AppToolContext(mockContext), mapOf("package_name" to "com.example.app"))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -52,7 +53,7 @@ class LaunchAppToolTest {
         every { mockPackageManager.getLaunchIntentForPackage("com.example.app") } returns null
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("package_name" to "com.example.app"))
+            tool.execute(AppToolContext(mockContext), mapOf("package_name" to "com.example.app"))
         }
 
         assertTrue(result is ToolResult.Failure)
@@ -70,7 +71,7 @@ class LaunchAppToolTest {
         every { mockContext.startActivity(any()) } throws SecurityException("Permission denied")
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("package_name" to "com.example.app"))
+            tool.execute(AppToolContext(mockContext), mapOf("package_name" to "com.example.app"))
         }
 
         assertTrue(result is ToolResult.Failure)

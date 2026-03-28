@@ -3,7 +3,7 @@ package com.androidagent.tools.tools.ui
 import com.androidagent.core.ToolError
 import com.androidagent.core.ToolResult
 import com.androidagent.tools.accessibility.AgentAccessibilityService
-import com.androidagent.tools.core.EnvironmentDetector
+import com.androidagent.androidapp.EnvironmentDetector
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import android.content.Context
+import com.androidagent.androidapp.AppToolContext
 
 class TapToolTest {
     private val tool = TapTool()
@@ -55,7 +56,7 @@ class TapToolTest {
         every { anyConstructed<EnvironmentDetector>().hasRoot() } returns false
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("x" to 100, "y" to 200))
+            tool.execute(AppToolContext(mockContext), mapOf("x" to 100, "y" to 200))
         }
 
         assertTrue(result is ToolResult.Failure)

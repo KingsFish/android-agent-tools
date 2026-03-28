@@ -5,6 +5,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
+import com.androidagent.androidapp.AppToolContext
 
 class FileExistsToolTest {
     private val tool = FileExistsTool()
@@ -15,7 +16,7 @@ class FileExistsToolTest {
         val tempFile = File.createTempFile("exists_test", ".txt")
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("path" to tempFile.absolutePath))
+            tool.execute(AppToolContext(mockContext), mapOf("path" to tempFile.absolutePath))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -29,7 +30,7 @@ class FileExistsToolTest {
     @Test
     fun `execute returns exists false for nonexistent file`() {
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("path" to "/nonexistent/file.txt"))
+            tool.execute(AppToolContext(mockContext), mapOf("path" to "/nonexistent/file.txt"))
         }
 
         assertTrue(result is ToolResult.Success)
@@ -43,7 +44,7 @@ class FileExistsToolTest {
         tempDir.mkdirs()
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("path" to tempDir.absolutePath))
+            tool.execute(AppToolContext(mockContext), mapOf("path" to tempDir.absolutePath))
         }
 
         assertTrue(result is ToolResult.Success)

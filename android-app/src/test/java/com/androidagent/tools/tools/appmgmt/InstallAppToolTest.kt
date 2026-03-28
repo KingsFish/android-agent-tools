@@ -3,12 +3,13 @@ package com.androidagent.tools.tools.appmgmt
 import android.content.Context
 import com.androidagent.core.ToolError
 import com.androidagent.core.ToolResult
-import com.androidagent.tools.core.EnvironmentDetector
+import com.androidagent.androidapp.EnvironmentDetector
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import com.androidagent.androidapp.AppToolContext
 
 class InstallAppToolTest {
     private val tool = InstallAppTool()
@@ -30,7 +31,7 @@ class InstallAppToolTest {
         val mockContext = mockk<Context>(relaxed = true)
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("apk_path" to "/sdcard/nonexistent.apk"))
+            tool.execute(AppToolContext(mockContext), mapOf("apk_path" to "/sdcard/nonexistent.apk"))
         }
 
         assertTrue(result is ToolResult.Failure)
@@ -46,7 +47,7 @@ class InstallAppToolTest {
         tempFile.deleteOnExit()
 
         val result = kotlinx.coroutines.runBlocking {
-            tool.execute(mockContext, mapOf("apk_path" to tempFile.absolutePath))
+            tool.execute(AppToolContext(mockContext), mapOf("apk_path" to tempFile.absolutePath))
         }
 
         assertTrue(result is ToolResult.Failure)

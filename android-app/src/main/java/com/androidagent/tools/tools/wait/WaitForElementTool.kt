@@ -16,7 +16,7 @@ class WaitForElementTool : Tool {
 
     override fun validate(params: Map<String, Any?>): ValidationResult {
         val validator = ParameterValidator(params)
-        return validator.requireString("text")
+        return validator.requireNonEmptyString("text")
     }
 
     override suspend fun execute(context: ToolContext, params: Map<String, Any?>): ToolResult {

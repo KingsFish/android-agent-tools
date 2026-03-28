@@ -30,6 +30,10 @@ class InstallAppTool : Tool {
             return ToolResult.failure(ToolError.APK_NOT_FOUND, apkPath)
         }
 
+        if (!apkPath.endsWith(".apk", ignoreCase = true)) {
+            return ToolResult.failure(ToolError.INVALID_APK, "File must be an APK")
+        }
+
         if (!context.hasCapability(AndroidCapability.ROOT)) {
             return ToolResult.failure(ToolError.ROOT_REQUIRED)
         }

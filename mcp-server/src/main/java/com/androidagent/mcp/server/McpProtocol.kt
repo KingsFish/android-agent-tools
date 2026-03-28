@@ -13,8 +13,8 @@ object McpProtocol {
      * Create MCP tools/list response
      */
     fun createToolsListResponse(tools: AndroidAgentTools): String {
-        val toolList = tools.listTools().map { toolName ->
-            ToolSchemaGenerator.generateToolSchema(toolName)
+        val toolList = tools.getAllTools().map { tool ->
+            ToolSchemaGenerator.generateToolSchema(tool)
         }
 
         return JSONObject().apply {
