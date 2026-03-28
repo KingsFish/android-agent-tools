@@ -620,7 +620,7 @@ Check the status of specified permissions.
 |------|------|------|
 | **Android SDK/库** | ✅ 已完成 | 开发者可集成到自己的 App 中 |
 | **MCP Server App** | ✅ 已完成 | 独立 App，通过 HTTP 暴露所有工具 |
-| **ADB 工具命令集** | 📋 规划中 | 供远程 Agent 通过 ADB 调用 |
+| **ADB 工具命令集** | ✅ 已完成 | 供远程 Agent 通过 ADB 调用 |
 
 ### 7.1 MCP Server App
 
