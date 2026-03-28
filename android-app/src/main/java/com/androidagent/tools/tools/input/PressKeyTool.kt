@@ -3,10 +3,11 @@ package com.androidagent.tools.tools.input
 import com.androidagent.core.*
 import com.androidagent.androidapp.AndroidCapability
 import com.androidagent.androidapp.AppToolContext
+import com.androidagent.androidapp.KeyEventConstants
 
 class PressKeyTool : Tool {
     override val name = "press_key"
-    override val description = "Send a key event. Supported keys: back, home, enter, delete, volume_up, volume_down, menu, search, dpad_up, dpad_down, dpad_left, dpad_right, dpad_center."
+    override val description = "Send a key event. Supported keys: back, home, enter, delete, volume_up, volume_down, menu, search, dpad_up, dpad_down, dpad_left, dpad_right, dpad_center. Also supports aliases: vol_up, vol_down, esc, prev, del, backspace, mute."
     override val inputSchema = ToolSchema(
         properties = mapOf(
             "key_name" to SchemaProperty(type = "string", description = "Key name to press (e.g., 'enter', 'delete', 'volume_up')"),
@@ -15,20 +16,11 @@ class PressKeyTool : Tool {
         required = emptyList()
     )
 
-    private val keyNameToCode = mapOf(
-        "back" to 4, "home" to 3, "menu" to 82, "search" to 84,
-        "up" to 19, "down" to 20, "left" to 21, "right" to 22, "center" to 23, "enter" to 66,
-        "tab" to 61, "escape" to 111, "delete" to 67, "space" to 62,
-        "volume_up" to 24, "volume_down" to 25, "volume_mute" to 164,
-        "power" to 26, "camera" to 27,
-        "play" to 126, "pause" to 127, "play_pause" to 85, "stop" to 86, "next" to 87, "previous" to 88
-    )
-
     override fun validate(params: Map<String, Any?>): ValidationResult {
         val validator = ParameterValidator(params)
         val keyName = validator.getString("key_name")
         val keyCode = validator.getInt("key_code")
-        
+
         return if (keyName != null || keyCode != null) {
             ValidationResult.success()
         } else {
@@ -43,7 +35,7 @@ class PressKeyTool : Tool {
 
         val actualKeyCode = when {
             keyCode != null -> keyCode
-            keyName != null -> keyNameToCode[keyName.lowercase()]
+            keyName != null -> KeyEventConstants.fromName(keyName)
                 ?: return ToolResult.failure(ToolError.INVALID_PARAMETER, "Unknown key name: $keyName")
             else -> return ToolResult.failure(ToolError.INVALID_PARAMETER, "Either key_name or key_code is required")
         }
@@ -55,13 +47,31 @@ class PressKeyTool : Tool {
             return executeWithRoot(actualKeyCode)
         }
 
+        // Without ROOT, try accessibility service for supported global actions
         val service = appContext.getAccessibilityService()
             ?: return ToolResult.failure(ToolError.ACCESSIBILITY_SERVICE_REQUIRED)
 
-        return if (service.pressBack()) {
+        return executeWithAccessibility(service, actualKeyCode)
+    }
+
+    private fun executeWithAccessibility(
+        service: com.androidagent.tools.accessibility.AgentAccessibilityService,
+        keyCode: Int
+    ): ToolResult {
+        val success = when (keyCode) {
+            KeyEventConstants.BACK -> service.pressBack()
+            KeyEventConstants.HOME -> service.pressHome()
+            // Keys that require ROOT - return appropriate error
+            else -> return ToolResult.failure(
+                ToolError.ROOT_REQUIRED,
+                "Key code $keyCode requires ROOT access. Only BACK and HOME are supported via accessibility service."
+            )
+        }
+
+        return if (success) {
             ToolResult.success(emptyMap())
         } else {
-            ToolResult.failure(ToolError.KEY_EVENT_FAILED, "key_code: $actualKeyCode")
+            ToolResult.failure(ToolError.KEY_EVENT_FAILED, "Failed to execute key event: $keyCode")
         }
     }
 
