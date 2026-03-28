@@ -1,27 +1,20 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace = "com.androidagent.mcp"
+    namespace = "com.androidagent.tools"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.androidagent.mcp"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
     compileOptions {
@@ -34,20 +27,21 @@ android {
 }
 
 dependencies {
-    implementation(project(":android-app"))
     implementation(project(":core"))
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.nanohttpd:nanohttpd:2.3.1")
 
     // Testing
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("org.json:json:20231013")
+    testImplementation("org.robolectric:robolectric:4.11.1")
+
+    // Android instrumentation testing
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
 
 tasks.withType<Test> {
