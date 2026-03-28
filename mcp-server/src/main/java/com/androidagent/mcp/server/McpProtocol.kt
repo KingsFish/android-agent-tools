@@ -1,12 +1,11 @@
 package com.androidagent.mcp.server
 
+import com.androidagent.core.ToolResult
 import com.androidagent.tools.AndroidAgentTools
-import com.androidagent.tools.core.ToolResult
 import org.json.JSONObject
 
 /**
  * MCP Protocol implementation.
- * Handles request/response formatting according to MCP specification.
  */
 object McpProtocol {
 
@@ -15,8 +14,6 @@ object McpProtocol {
      */
     fun createToolsListResponse(tools: AndroidAgentTools): String {
         val toolList = tools.listTools().map { toolName ->
-            // Get tool info from executor (we need to access internal registry)
-            // For now, we use a simpler approach by generating schema based on tool name
             ToolSchemaGenerator.generateToolSchema(toolName)
         }
 
