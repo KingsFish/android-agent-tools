@@ -650,6 +650,34 @@ mcp-server/
 1. WiFi（同网络）：直接访问手机 IP + 端口 8080
 2. USB（ADB 转发）：`adb forward tcp:8080 tcp:8080`
 
+### 7.1 MCP Server App
+
+MCP Server App 是一个独立的 Android 应用，通过 HTTP 协议暴露所有工具，供远程 Agent 调用。
+
+**架构**
+
+```
+mcp-server/
+├── MainActivity.kt         # UI 入口（启动/停止服务）
+├── McpService.kt           # 后台服务（运行 HTTP Server）
+├── McpHttpServer.kt        # NanoHTTPD 实现
+├── McpProtocol.kt          # MCP 协议处理
+└── ToolSchemaGenerator.kt  # 工具 Schema 定义
+```
+
+**端点**
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/health` | GET | 健康检查 |
+| `/mcp/tools/list` | POST | 获取工具列表 |
+| `/mcp/tools/call` | POST | 执行工具 |
+
+**使用方式**
+
+1. WiFi（同网络）：直接访问手机 IP + 端口 8080
+2. USB（ADB 转发）：`adb forward tcp:8080 tcp:8080`
+
 ---
 
 ## 8. 开放问题
