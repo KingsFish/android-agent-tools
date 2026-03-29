@@ -22,7 +22,7 @@
 | Tier 3 | ✅ 已完成 | 14 |
 | Tier 4 | 📋 规划中 | 9+ |
 
-**当前版本**: 2.0.0 | **总工具数**: 33
+**当前版本**: 2.1.0 | **总工具数**: 33
 
 ---
 
@@ -650,33 +650,52 @@ mcp-server/
 1. WiFi（同网络）：直接访问手机 IP + 端口 8080
 2. USB（ADB 转发）：`adb forward tcp:8080 tcp:8080`
 
-### 7.1 MCP Server App
+### 7.2 ADB CLI 工具
 
-MCP Server App 是一个独立的 Android 应用，通过 HTTP 协议暴露所有工具，供远程 Agent 调用。
+ADB CLI 工具 (`aat`) 是一个 Node.js 命令行工具，供远程 LLM Agent 通过 ADB 命令操控 Android 设备。
 
 **架构**
 
 ```
-mcp-server/
-├── MainActivity.kt         # UI 入口（启动/停止服务）
-├── McpService.kt           # 后台服务（运行 HTTP Server）
-├── McpHttpServer.kt        # NanoHTTPD 实现
-├── McpProtocol.kt          # MCP 协议处理
-└── ToolSchemaGenerator.kt  # 工具 Schema 定义
+cli/
+├── bin/aat                 # CLI 入口
+├── src/
+│   ├── index.ts           # 主入口（自动注册命令）
+│   ├── adb.ts             # ADB 命令执行
+│   ├── device.ts          # 设备选择逻辑
+│   ├── output.ts          # JSON 输出格式化
+│   ├── parser.ts          # 参数解析
+│   ├── types.ts           # 类型定义
+│   └── commands/          # 31 个命令实现
+└── tests/                  # 测试文件
 ```
-
-**端点**
-
-| 端点 | 方法 | 说明 |
-|------|------|------|
-| `/health` | GET | 健康检查 |
-| `/mcp/tools/list` | POST | 获取工具列表 |
-| `/mcp/tools/call` | POST | 执行工具 |
 
 **使用方式**
 
-1. WiFi（同网络）：直接访问手机 IP + 端口 8080
-2. USB（ADB 转发）：`adb forward tcp:8080 tcp:8080`
+```bash
+# 安装
+cd cli && npm install && npm run build
+
+# 基本使用
+node bin/aat tap 500 800
+node bin/aat list_apps
+node bin/aat get_device_info
+
+# 指定设备
+node bin/aat -d emulator-5554 tap 500 800
+
+# 查看所有工具
+node bin/aat list_tools
+```
+
+**与 MCP Server 的差异**
+
+| 功能 | MCP Server | ADB CLI |
+|------|------------|---------|
+| `get_clipboard` | ✅ Accessibility Service | ❌ 不支持 |
+| `set_clipboard` | ✅ Accessibility Service | ❌ 不支持 |
+| `wait_for_element` | ✅ Accessibility Service | ⚠️ 轮询实现（效率较低） |
+| 其他工具 | ✅ 全部支持 | ✅ 全部支持 |
 
 ---
 
@@ -687,7 +706,7 @@ mcp-server/
 3. ~~是否需要提供文件监听能力（如 `watch_file`）？~~ → 已在 Tier 4 规划
 4. 国际化支持：错误消息是否需要多语言？
 5. MCP Server 是否需要支持 WebSocket 实时通信？
-6. 是否需要提供 ADB 命令行工具集？
+6. ~~是否需要提供 ADB 命令行工具集？~~ → ✅ 已完成，见 7.2 ADB CLI 工具
 
 ---
 
@@ -695,6 +714,7 @@ mcp-server/
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
+| 2.1.0 | 2026-03-29 | 新增 ADB CLI 工具 (`aat`)：31 个命令，供远程 Agent 通过 ADB 操控设备 |
 | 2.0.0 | 2026-03-27 | 新增 Tier 3 工具：导航、等待、状态查询、剪贴板、节点交互；新增 MCP Server App |
 | 1.1.0 | 2026-03-27 | 新增 Tier 2 工具：UI 交互、应用管理 |
 | 1.0.0 | 2026-03-27 | 初始版本：Tier 1 核心能力 |
