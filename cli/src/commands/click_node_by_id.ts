@@ -1,0 +1,37 @@
+// src/commands/click_node_by_id.ts
+import { ToolDefinition, CliOptions, ErrorCodes } from '../types';
+import { selectDevice, execAdb, success, failure, parseUiTree, findNodeById } from '../utils';
+
+export const definition: ToolDefinition = {
+  name: 'click_node_by_id',
+  description: 'Find a UI node by resource-id and tap its center',
+  parameters: [
+    { name: 'resource_id', type: 'string', required: true, description: 'Resource ID to search for' }
+  ],
+  adbCommand: 'uiautomator dump + find + tap',
+  async execute(resource_id: string, options?: CliOptions): Promise<string> {
+    try {
+      const device = await selectDevice(options?.device);
+      await execAdb(['shell', 'uiautomator', 'dump', '/sdcard/aat_ui.xml'], { deviceId: device });
+      const catResult = await execAdb(['shell', 'cat', '/sdcard/aat_ui.xml'], { deviceId: device });
+      if (catResult.exitCode !== 0) {
+        return failure(ErrorCodes.UI_DUMP_FAILED, 'Failed to get UI tree');
+      }
+      const tree = parseUiTree(catResult.stdout);
+      const node = findNodeById(tree, resource_id);
+      if (!node) {
+        return failure(ErrorCodes.APP_NOT_FOUND, `Node with resource-id "${resource_id}" not found`);
+      }
+      const tapResult = await execAdb(
+        ['shell', 'input', 'tap', String(node.centerX), String(node.centerY)],
+        { deviceId: device }
+      );
+      if (tapResult.exitCode === 0) {
+        return success({ resourceId: node.resourceId, text: node.text, bounds: node.bounds });
+      }
+      return failure(ErrorCodes.TAP_FAILED, tapResult.stderr);
+    } catch (err: any) {
+      return failure(ErrorCodes.DEVICE_NOT_FOUND, err.message);
+    }
+  }
+};
