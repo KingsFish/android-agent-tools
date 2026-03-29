@@ -25,6 +25,7 @@ export interface ToolDefinition {
 export interface AdbOptions {
   deviceId?: string;
   timeout?: number;
+  binary?: boolean;  // Set to true for binary output (will be base64 encoded)
 }
 
 export interface AdbResult {

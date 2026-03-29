@@ -8,8 +8,8 @@ describe('click_node_by_id command', () => {
     expect(definition.parameters).toHaveLength(1);
   });
 
-  it('should have resourceId parameter as required string', () => {
-    const resourceIdParam = definition.parameters.find(p => p.name === 'resourceId');
+  it('should have resource_id parameter as required string', () => {
+    const resourceIdParam = definition.parameters.find(p => p.name === 'resource_id');
     expect(resourceIdParam).toBeDefined();
     expect(resourceIdParam?.type).toBe('string');
     expect(resourceIdParam?.required).toBe(true);

@@ -21,12 +21,11 @@ export const definition: ToolDefinition = {
         args.push('-d', display.toString());
       }
 
-      const result = await execAdb(args, { deviceId: device, timeout: options?.timeout || 30000 });
+      const result = await execAdb(args, { deviceId: device, timeout: options?.timeout || 30000, binary: true });
 
       if (result.exitCode === 0) {
-        // The stdout contains the PNG binary data
-        // We need to convert it to base64 for JSON transport
-        const base64Data = result.stdout; // Already base64 encoded by execAdb for binary data
+        // stdout is base64 encoded PNG data (binary mode enabled)
+        const base64Data = result.stdout;
 
         return success({
           format: 'png',

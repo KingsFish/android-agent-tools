@@ -6,10 +6,10 @@ export const definition: ToolDefinition = {
   name: 'click_node_by_id',
   description: 'Find a UI node by resource-id and tap its center',
   parameters: [
-    { name: 'resourceId', type: 'string', required: true, description: 'Resource ID to search for' }
+    { name: 'resource_id', type: 'string', required: true, description: 'Resource ID to search for' }
   ],
   adbCommand: 'uiautomator dump + find + tap',
-  async execute(resourceId: string, options?: CliOptions): Promise<string> {
+  async execute(resource_id: string, options?: CliOptions): Promise<string> {
     try {
       const device = await selectDevice(options?.device);
       await execAdb(['shell', 'uiautomator', 'dump', '/sdcard/aat_ui.xml'], { deviceId: device });
@@ -18,9 +18,9 @@ export const definition: ToolDefinition = {
         return failure(ErrorCodes.UI_DUMP_FAILED, 'Failed to get UI tree');
       }
       const tree = parseUiTree(catResult.stdout);
-      const node = findNodeById(tree, resourceId);
+      const node = findNodeById(tree, resource_id);
       if (!node) {
-        return failure(ErrorCodes.APP_NOT_FOUND, `Node with resource-id "${resourceId}" not found`);
+        return failure(ErrorCodes.APP_NOT_FOUND, `Node with resource-id "${resource_id}" not found`);
       }
       const tapResult = await execAdb(
         ['shell', 'input', 'tap', String(node.centerX), String(node.centerY)],
